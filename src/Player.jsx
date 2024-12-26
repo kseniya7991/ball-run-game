@@ -3,13 +3,17 @@ import { useFrame } from "@react-three/fiber";
 import { useKeyboardControls } from "@react-three/drei";
 import { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
+import useGame from "./stores/useGame";
 
 export default function Player() {
     const body = useRef();
     const [subscribeKeys, getKeys] = useKeyboardControls();
     const { rapier, world } = useRapier();
+
     const [smoothCameraPosition] = useState(() => new THREE.Vector3(10,10,10));
     const [smoothCameraTarget] = useState(() => new THREE.Vector3());
+
+    const start = useGame((state) => state.start);
 
     /**
      * Jump
@@ -36,8 +40,13 @@ export default function Player() {
             }
         );
 
+        const unsubscribeAnyKey = subscribeKeys(() => {
+            start();
+        })
+
         return () => {
             unsubscribeJump();
+            unsubscribeAnyKey();
         };
     }, []);
 
