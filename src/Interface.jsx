@@ -9,6 +9,7 @@ export default function Interface() {
     const jump = useKeyboardControls((state) => state.jump);
 
     const restart = useGame((state) => state.restart);
+    const phase = useGame((state) => state.phase);
 
     return (
         <>
@@ -17,9 +18,11 @@ export default function Interface() {
                 <div className="interface__time">0.00</div>
 
                 {/* Restart */}
-                <div className="interface__restart" onClick={restart}>
-                    Restart
-                </div>
+                {phase === "ended" && (
+                    <div className="interface__restart" onClick={restart}>
+                        Restart
+                    </div>
+                )}
 
                 {/* Controls */}
                 <div className="interface__controls">
