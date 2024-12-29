@@ -1,7 +1,7 @@
 import { useRapier, RigidBody } from "@react-three/rapier";
 import { useFrame } from "@react-three/fiber";
 import { useKeyboardControls } from "@react-three/drei";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, use } from "react";
 import * as THREE from "three";
 import useGame from "./stores/useGame";
 
@@ -31,7 +31,24 @@ export default function Player() {
         if (hit.timeOfImpact < 0.15) body.current?.applyImpulse({ x: 0, y: 0.5, z: 0 });
     };
 
+    /**
+     * Reset
+     */
+
+    const reset = () => {
+        body.current?.setTranslation({ x: 0, y: 1, z: 0 });
+        body.current?.setLinvel({ x: 0, y: 0, z: 0 });
+        body.current?.setAngvel({ x: 0, y: 0, z: 0 });
+    };
+
     useEffect(() => {
+        const unsubscribePhase = useGame.subscribe(
+            (state) => state.phase,
+            (value) => {
+                if (value === "ready") reset();
+            }
+        );
+
         /**
          * Subscribe to jump event
          */
@@ -50,6 +67,7 @@ export default function Player() {
         return () => {
             unsubscribeJump();
             unsubscribeAnyKey();
+            unsubscribePhase();
         };
     }, []);
 

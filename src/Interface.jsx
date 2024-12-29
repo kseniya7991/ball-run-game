@@ -1,4 +1,5 @@
 import { useKeyboardControls } from "@react-three/drei";
+import useGame from "./stores/useGame";
 
 export default function Interface() {
     const forward = useKeyboardControls((state) => state.forward);
@@ -7,6 +8,8 @@ export default function Interface() {
     const leftward = useKeyboardControls((state) => state.leftward);
     const jump = useKeyboardControls((state) => state.jump);
 
+    const restart = useGame((state) => state.restart);
+
     return (
         <>
             <div className="interface">
@@ -14,7 +17,9 @@ export default function Interface() {
                 <div className="interface__time">0.00</div>
 
                 {/* Restart */}
-                <div className="interface__restart">Restart</div>
+                <div className="interface__restart" onClick={restart}>
+                    Restart
+                </div>
 
                 {/* Controls */}
                 <div className="interface__controls">
