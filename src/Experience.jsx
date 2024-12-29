@@ -5,16 +5,16 @@ import { Physics } from "@react-three/rapier";
 import Player from "./Player";
 import useGame from "./stores/useGame";
 
-
 export default function Experience() {
     const blocksCount = useGame((state) => state.blocksCount);
-    console.log(blocksCount);
+    const blocksSeed = useGame((state) => state.blocksSeed);
     return (
         <>
             {/* <OrbitControls makeDefault /> */}
-            <Physics >
+            <color args={["#bdedfc"]} attach="background" />
+            <Physics>
                 <Lights />
-                <Level count={blocksCount}/>
+                <Level count={blocksCount} seed={blocksSeed} />
                 <Player />
             </Physics>
         </>
