@@ -30,7 +30,7 @@ export function BlockEnd({geometry = boxGeometry, material = levelMaterials.floo
                 colliders="hull"
                 restitution={0.2}
                 friction={0}>
-                <primitive object={scene} position-y={1} />
+                <primitive object={scene} position-y={1.2} />
             </RigidBody>
         </group>
     );
