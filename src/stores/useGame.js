@@ -6,17 +6,13 @@ export default create((set) => {
 
         // Phases
         phase: "ready",
-        start: () =>
-            set(() => {
-                return { phase: "playing" };
-            }),
+        start: () => set((state) => (state.phase === "ready" ? { phase: "playing" } : {})),
         restart: () =>
-            set(() => {
-                return { phase: "ready" };
-            }),
+            set((state) =>
+                state.phase === "playing" || state.phase === "ended" ? { phase: "ready" } : {}
+            ),
+
         end: () =>
-            set(() => {
-                return { phase: "ended" };
-            }),
+            set((state) => state.phase === "playing" ? { phase: "ended" } : {}),
     };
 });

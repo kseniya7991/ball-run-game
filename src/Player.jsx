@@ -10,10 +10,11 @@ export default function Player() {
     const [subscribeKeys, getKeys] = useKeyboardControls();
     const { rapier, world } = useRapier();
 
-    const [smoothCameraPosition] = useState(() => new THREE.Vector3(10,10,10));
+    const [smoothCameraPosition] = useState(() => new THREE.Vector3(10, 10, 10));
     const [smoothCameraTarget] = useState(() => new THREE.Vector3());
 
     const start = useGame((state) => state.start);
+    const restart = useGame((state) => state.restart);
     const end = useGame((state) => state.end);
     const blocksCount = useGame((state) => state.blocksCount);
 
@@ -44,7 +45,7 @@ export default function Player() {
 
         const unsubscribeAnyKey = subscribeKeys(() => {
             start();
-        })
+        });
 
         return () => {
             unsubscribeJump();
@@ -109,7 +110,8 @@ export default function Player() {
         /**
          * Phases
          */
-        if(bodyPosition.z < -(blocksCount * 4 + 2)) end();
+        if (bodyPosition.z < -(blocksCount * 4 + 2)) end();
+        if (bodyPosition.y < -4) restart();
     });
 
     return (
