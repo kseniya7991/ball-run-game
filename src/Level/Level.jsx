@@ -13,13 +13,13 @@ export const levelMaterials = {
     floor1: new THREE.MeshStandardMaterial({ color: "limegreen" }),
     floor2: new THREE.MeshStandardMaterial({ color: "greenyellow" }),
     obstacle: new THREE.MeshStandardMaterial({ color: "mediumpurple" }),
-    wall: new THREE.MeshStandardMaterial({ color: "stagegrey" }),
+    wall: new THREE.MeshStandardMaterial({ color: "#798e95" }),
 };
 
-export function Level({ count = 5, types = [BlockSpinner, BlockLimbo, BlockAxe] }) {
+export function Level({ count = 5, types = [BlockSpinner, BlockLimbo, BlockAxe], seed = 0 }) {
     const blocks = useMemo(
         () => Array.from({ length: count }, () => types[Math.floor(Math.random() * types.length)]),
-        [count, types]
+        [count, types, seed]
     );
     return (
         <>
