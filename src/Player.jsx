@@ -14,6 +14,8 @@ export default function Player() {
     const [smoothCameraTarget] = useState(() => new THREE.Vector3());
 
     const start = useGame((state) => state.start);
+    const end = useGame((state) => state.end);
+    const blocksCount = useGame((state) => state.blocksCount);
 
     /**
      * Jump
@@ -103,6 +105,11 @@ export default function Player() {
 
         state.camera.position.copy(smoothCameraPosition);
         state.camera.lookAt(smoothCameraTarget);
+
+        /**
+         * Phases
+         */
+        if(bodyPosition.z < -(blocksCount * 4 + 2)) end();
     });
 
     return (

@@ -8,15 +8,15 @@ export default create((set) => {
         phase: "ready",
         start: () =>
             set(() => {
-                phase: "playing";
+                return { phase: "playing" };
             }),
         restart: () =>
             set(() => {
-                phase: "ready";
+                return { phase: "ready" };
             }),
         end: () =>
             set(() => {
-                phase: "ended";
+                return { phase: "ended" };
             }),
     };
 });
