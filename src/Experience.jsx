@@ -1,4 +1,4 @@
-// import { OrbitControls } from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
 import Lights from "./Lights.jsx";
 import { Level } from "./Level/Level.jsx";
 import { Physics } from "@react-three/rapier";
@@ -12,7 +12,7 @@ export default function Experience() {
         <>
             {/* <OrbitControls makeDefault /> */}
             <color args={["#bdedfc"]} attach="background" />
-            <Physics>
+            <Physics debug>
                 <Lights />
                 <Level count={blocksCount} seed={blocksSeed} />
                 <Player />
