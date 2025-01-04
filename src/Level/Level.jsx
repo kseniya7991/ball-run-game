@@ -29,7 +29,7 @@ export function Level({ count = 5, types = [BlockSpinner, BlockLimbo, BlockAxe],
                 <Block key={i} position={[0, 0, (i + 1) * -4]} />
             ))}
 
-            <BlockEnd position={[0, 0, -(count + 1) * 4]} />
+            <BlockEnd position={[0, 0, -(count + 1) * 4]} key={count}/>
             <Walls length={count + 2} />
         </>
     );

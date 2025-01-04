@@ -25,6 +25,7 @@ export function BlockEnd({
         rotation.setFromEuler(new THREE.Euler(0, time * 1.5, 0));
         coin.current?.setNextKinematicRotation(rotation);
     });
+
     return (
         <>
             <group position={position}>
@@ -36,12 +37,6 @@ export function BlockEnd({
                 </Float>
 
                 <RigidBody type="fixed">
-                    <CuboidCollider
-                        args={[2, 0.1, 2]}
-                        position={[0, -0.1, 0]}
-                        restitution={0.2}
-                        friction={1}
-                    />
                     <CuboidCollider
                         args={[0.1, 1, 2]}
                         position={[-2, 1, 0]}
@@ -59,9 +54,9 @@ export function BlockEnd({
                         position={[0, 1, -2]}
                         restitution={0.2}
                         friction={1}
-                    />
+                    /> 
+                    <Floor geometry={geometry} material={material} position={[0, 0, 0]} />
                 </RigidBody>
-                <Floor geometry={geometry} material={material} position={[0, 0, 0]} />
                 <RigidBody
                     type="kinematicPosition"
                     ref={coin}
