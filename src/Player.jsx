@@ -4,6 +4,7 @@ import { useKeyboardControls } from "@react-three/drei";
 import { useRef, useEffect, useState, use } from "react";
 import * as THREE from "three";
 import useGame from "./stores/useGame";
+import { useControls } from "leva";
 
 export default function Player() {
     const body = useRef();
@@ -17,6 +18,10 @@ export default function Player() {
     const restart = useGame((state) => state.restart);
     const end = useGame((state) => state.end);
     const blocksCount = useGame((state) => state.blocksCount);
+
+    const { "ball color": ballColor } = useControls({
+        "ball color": "#08a3f2"
+    });
 
     /**
      * Jump
@@ -144,7 +149,7 @@ export default function Player() {
             angularDamping={0.5}>
             <mesh castShadow>
                 <icosahedronGeometry args={[0.3, 1]} />
-                <meshStandardMaterial flatShading color="orangered" />
+                <meshStandardMaterial flatShading color={ballColor} />
             </mesh>
         </RigidBody>
     );
