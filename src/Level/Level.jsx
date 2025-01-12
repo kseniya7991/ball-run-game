@@ -7,6 +7,7 @@ import { BlockLimbo } from "./BlockLimbo";
 import { BlockAxe } from "./BlockAxe";
 import { Walls } from "./Walls";
 import { BlockSpinner } from "./BLockSpinner";
+import { BlockLava } from "./BlockLava";
 
 export const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 export const levelMaterials = {
@@ -14,9 +15,10 @@ export const levelMaterials = {
     floor2: new THREE.MeshStandardMaterial({ color: "greenyellow" }),
     obstacle: new THREE.MeshStandardMaterial({ color: "mediumpurple" }),
     wall: new THREE.MeshStandardMaterial({ color: "#798e95" }),
+    lava: new THREE.MeshStandardMaterial({ color: "#FF6600" }),
 };
 
-export function Level({ count = 5, types = [BlockSpinner, BlockLimbo, BlockAxe], seed = 0 }) {
+export function Level({ count = 5, types = [BlockSpinner, BlockLimbo, BlockAxe, BlockLava], seed = 0 }) {
     const blocks = useMemo(
         () => Array.from({ length: count }, () => types[Math.floor(Math.random() * types.length)]),
         [count, types, seed]

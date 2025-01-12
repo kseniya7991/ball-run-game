@@ -1,9 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useFrame, extend } from "@react-three/fiber";
 import { RigidBody, CuboidCollider } from "@react-three/rapier";
 
 import { boxGeometry, levelMaterials } from "./Level";
 import { Floor } from "./Floor";
+
+import useGame from "../stores/useGame";
 
 import fragmentShader from "../shaders/lava/fragment.glsl";
 import vertexShader from "../shaders/lava/vertex.glsl";
@@ -29,47 +31,43 @@ export function BlockLava({
     position = [0, 0, 0],
 }) {
     const lavaMaterial = useRef();
+    const startBurning = useGame((state) => state.startBurning);
+    const end = useGame((state) => state.end);
+    const lavaSize = 2;
+    const floorSize = (4 - lavaSize) / 2;
+    const marginFloor = floorSize / 2 + lavaSize / 2;   
+
+
     useEffect(() => {
         lavaMaterial.current.uTime += Math.random() * 10;
-    }, [])
- 
+    }, []);
 
     useFrame((state, delta) => {
         lavaMaterial.current.uTime += delta * 0.3;
     });
 
     const handleCollision = (event) => {
-        const { manifold, target, other } = event;
-        console.log("collision enter")
-        // console.log( manifold.solverContactPoint(0));
+        startBurning();
+        end();
     };
-
-    const handleContact = (event) => {
-        // console.log(event)
-    }
-    const handleCollisionExit = (event) => {
-        console.log("collision exit")
-    }
 
     return (
         <group position={position}>
-            <Floor position={[0, -0.1, 1.5]} scale={[4, 0.2, 1]} />
-            <Floor position={[0, -0.1, -1.5]} scale={[4, 0.2, 1]} />
+            <Floor position={[0, -0.1, marginFloor]} scale={[4, 0.2, floorSize]} />
+            <Floor position={[0, -0.1, - marginFloor]} scale={[4, 0.2, floorSize]} />
             <RigidBody type="kinematicPosition" position={[0, 0, 0]} restitution={0.2} friction={0}>
                 <CuboidCollider
-                    args={[2, 0.05, 1]}
+                    args={[2, 0.05, lavaSize / 2]}
                     position={[0, -0.4, 0]}
                     restitution={0.2}
                     friction={1}
-                    onCollisionEnter={handleCollision} 
-                    onCollisionExit={handleCollisionExit}
-                    // onContactForce={handleContact}
+                    onCollisionEnter={handleCollision}
                 />
             </RigidBody>
             <mesh
                 geometry={geometry}
                 position-y={-0.125}
-                scale={[4, 0.15, 2]}
+                scale={[4, 0.15, lavaSize]}
                 castShadow
                 receiveShadow>
                 <lavaMaterial ref={lavaMaterial} />

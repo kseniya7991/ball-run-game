@@ -7,9 +7,20 @@ export default create(
             blocksCount: 1,
             blocksSeed: 0,
 
-            updateBlocksCount: (val) => set((state) => {
-                return { blocksCount: val };
-            }),
+            updateBlocksCount: (val) =>
+                set((state) => {
+                    return { blocksCount: val };
+                }),
+
+            isBurning: false,
+            startBurning: () =>
+                set((state) => {
+                    return { isBurning: true };
+                }),
+            endBurning: () =>
+                set((state) => {
+                    return { isBurning: false };
+                }),
 
             /**
              * Time

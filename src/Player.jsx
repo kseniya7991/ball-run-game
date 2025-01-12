@@ -1,13 +1,15 @@
 import { useRapier, RigidBody } from "@react-three/rapier";
 import { useFrame } from "@react-three/fiber";
-import { useKeyboardControls } from "@react-three/drei";
+import { useKeyboardControls, Sparkles } from "@react-three/drei";
 import { useRef, useEffect, useState, use } from "react";
 import * as THREE from "three";
 import useGame from "./stores/useGame";
 import { useControls } from "leva";
+import { LavaSparkles } from "./Level/LavaSparkles";
 
 export default function Player() {
     const body = useRef();
+    const [bodyPosition, setBodyPosition] = useState({ x: 0, y: 1, z: 0 });
     const [subscribeKeys, getKeys] = useKeyboardControls();
     const { rapier, world } = useRapier();
 
@@ -18,9 +20,11 @@ export default function Player() {
     const restart = useGame((state) => state.restart);
     const end = useGame((state) => state.end);
     const blocksCount = useGame((state) => state.blocksCount);
+    const isBurning = useGame((state) => state.isBurning);
+    const endBurning = useGame((state) => state.endBurning);
 
     const { "ball color": ballColor } = useControls({
-        "ball color": "#08a3f2"
+        "ball color": "#08a3f2",
     });
 
     /**
@@ -50,7 +54,10 @@ export default function Player() {
         const unsubscribePhase = useGame.subscribe(
             (state) => state.phase,
             (value) => {
-                if (value === "ready") reset();
+                if (value === "ready") {
+                    reset();
+                    endBurning();
+                }
             }
         );
 
@@ -115,6 +122,10 @@ export default function Player() {
         const bodyPosition = body.current?.translation();
         if (!bodyPosition) return;
 
+        const bodyPositionVec = new THREE.Vector3();
+        bodyPositionVec.copy(bodyPosition);
+        setBodyPosition(bodyPositionVec);
+
         const cameraPosition = new THREE.Vector3();
         cameraPosition.copy(bodyPosition);
         cameraPosition.z += 3.25;
@@ -138,19 +149,25 @@ export default function Player() {
     });
 
     return (
-        <RigidBody
-            ref={body}
-            canSleep={false}
-            position={[0, 0.5, 0]}
-            colliders="ball"
-            restitution={0.2}
-            friction={1}
-            linearDamping={0.5}
-            angularDamping={0.5}>
-            <mesh castShadow>
-                <icosahedronGeometry args={[0.3, 1]} />
-                <meshStandardMaterial flatShading color={ballColor} />
-            </mesh>
-        </RigidBody>
+        <>
+            <group>
+                <RigidBody
+                    ref={body}
+                    canSleep={false}
+                    position={[0, 0.5, 0]}
+                    colliders="ball"
+                    restitution={0.2}
+                    friction={1}
+                    linearDamping={0.5}
+                    angularDamping={0.5}>
+                    <mesh castShadow>
+                        <icosahedronGeometry args={[0.3, 1]} />
+                        <meshStandardMaterial flatShading color={ballColor} />
+                    </mesh>
+                </RigidBody>
+
+                {isBurning && <LavaSparkles position={bodyPosition} />}
+            </group>
+        </>
     );
 }
