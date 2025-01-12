@@ -15,6 +15,7 @@ export default function Player() {
 
     const [smoothCameraPosition] = useState(() => new THREE.Vector3(10, 10, 10));
     const [smoothCameraTarget] = useState(() => new THREE.Vector3());
+    const [burnedColor] = useState(() => "#272727");
 
     const start = useGame((state) => state.start);
     const restart = useGame((state) => state.restart);
@@ -60,7 +61,6 @@ export default function Player() {
                 }
             }
         );
-
         /**
          * Subscribe to jump event
          */
@@ -162,7 +162,7 @@ export default function Player() {
                     angularDamping={0.5}>
                     <mesh castShadow>
                         <icosahedronGeometry args={[0.3, 1]} />
-                        <meshStandardMaterial flatShading color={ballColor} />
+                        <meshStandardMaterial flatShading color={isBurning ? burnedColor :ballColor} />
                     </mesh>
                 </RigidBody>
 
