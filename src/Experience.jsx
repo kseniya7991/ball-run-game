@@ -17,7 +17,7 @@ export default function Experience() {
             value: 5,
             step: 1,
             min: 1,
-            max: 10,
+            max: 20,
         },
     });
 
@@ -29,8 +29,10 @@ export default function Experience() {
     return (
         <>
             {/* <OrbitControls makeDefault /> */}
+
             <color args={["#bdedfc"]} attach="background" />
-            <Physics debug>
+
+            <Physics>
                 <Lights />
                 <Level count={blocksCount} seed={blocksSeed} />
                 <Player />
