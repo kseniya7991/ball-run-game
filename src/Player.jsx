@@ -20,9 +20,9 @@ export default function Player() {
     const start = useGame((state) => state.start);
     const restart = useGame((state) => state.restart);
     const end = useGame((state) => state.end);
-    const blocksCount = useGame((state) => state.blocksCount);
     const isBurning = useGame((state) => state.isBurning);
     const endBurning = useGame((state) => state.endBurning);
+    const levelLength = useGame((state) => state.levelLength);
 
     const { "ball color": ballColor } = useControls({
         "ball color": "#08a3f2",
@@ -38,7 +38,7 @@ export default function Player() {
 
         const ray = new rapier.Ray(origin, direction);
         const hit = world.castRay(ray, 10, true);
-        if (hit.timeOfImpact < 0.15) body.current?.applyImpulse({ x: 0, y: 0.5, z: 0 });
+        if (hit?.timeOfImpact < 0.15) body.current?.applyImpulse({ x: 0, y: 0.5, z: 0 });
     };
 
     /**
@@ -144,7 +144,7 @@ export default function Player() {
         /**
          * Phases
          */
-        if (bodyPosition.z < -(blocksCount * 4 + 2)) end();
+        if(bodyPosition.z < - (levelLength + 2)) end();
         if (bodyPosition.y < -4) restart();
     });
 
@@ -162,7 +162,10 @@ export default function Player() {
                     angularDamping={0.5}>
                     <mesh castShadow>
                         <icosahedronGeometry args={[0.3, 1]} />
-                        <meshStandardMaterial flatShading color={isBurning ? burnedColor :ballColor} />
+                        <meshStandardMaterial
+                            flatShading
+                            color={isBurning ? burnedColor : ballColor}
+                        />
                     </mesh>
                 </RigidBody>
 

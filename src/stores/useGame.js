@@ -6,6 +6,11 @@ export default create(
         return {
             blocksCount: 1,
             blocksSeed: 0,
+            levelLength: 0,
+            updateLevelLength: (val) =>
+                set((state) => {
+                    return { levelLength: val };
+                }),
 
             updateBlocksCount: (val) =>
                 set((state) => {

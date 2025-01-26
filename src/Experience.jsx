@@ -14,7 +14,7 @@ export default function Experience() {
 
     const { "blocks count": blocksCountValue } = useControls({
         "blocks count": {
-            value: 5,
+            value: 10,
             step: 1,
             min: 1,
             max: 20,
@@ -28,11 +28,12 @@ export default function Experience() {
 
     return (
         <>
-            {/* <OrbitControls makeDefault /> */}
+            <OrbitControls makeDefault />
 
-            <color args={["#bdedfc"]} attach="background" />
+            {/* <color args={["#bdedfc"]} attach="background" /> */}
+            <color args={["#242424"]} attach="background" />
 
-            <Physics>
+            <Physics debug>
                 <Lights />
                 <Level count={blocksCount} seed={blocksSeed} />
                 <Player />

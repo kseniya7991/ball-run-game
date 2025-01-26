@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { Float, Text, useGLTF } from "@react-three/drei";
+import { Float, Text } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { RigidBody, CuboidCollider } from "@react-three/rapier";
 import * as THREE from "three";
@@ -13,11 +13,7 @@ export function BlockEnd({
     position = [0, 0, 0],
 }) {
     const coin = useRef();
-    const { scene } = useGLTF(
-        "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/coin/model.gltf"
-    );
-
-    scene.children.forEach((mesh) => (mesh.castShadow = true));
+    const end = useRef();
 
     useFrame((state, delta) => {
         const time = state.clock.getElapsedTime();
@@ -26,17 +22,18 @@ export function BlockEnd({
         coin.current?.setNextKinematicRotation(rotation);
     });
 
+
     return (
         <>
-            <group position={position}>
-                <Float floatIntensity={1.5} rotationIntensity={0.25}>
+            <group>
+                <Float floatIntensity={1.5} rotationIntensity={0.25} position={position}>
                     <Text font="./bebas-neue-v9-latin-regular.woff" position={[0, 2, 2]} scale={1}>
                         Finish
                         <meshBasicMaterial toneMapped={false} />
                     </Text>
                 </Float>
 
-                <RigidBody type="fixed">
+                <RigidBody type="fixed" position={position} ref={end}>
                     <CuboidCollider
                         args={[0.1, 1, 2]}
                         position={[-2, 1, 0]}
@@ -54,16 +51,8 @@ export function BlockEnd({
                         position={[0, 1, -2]}
                         restitution={0.2}
                         friction={1}
-                    /> 
+                    />
                     <Floor geometry={geometry} material={material} position={[0, 0, 0]} />
-                </RigidBody>
-                <RigidBody
-                    type="kinematicPosition"
-                    ref={coin}
-                    colliders="hull"
-                    restitution={0.2}
-                    friction={0}>
-                    <primitive object={scene} position-y={1.2} />
                 </RigidBody>
             </group>
         </>

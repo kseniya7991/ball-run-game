@@ -1,4 +1,4 @@
-import { CuboidCollider, RigidBody } from "@react-three/rapier";
+import { RigidBody } from "@react-three/rapier";
 import { useControls } from "leva";
 
 import { boxGeometry, levelMaterials } from "./Level";
