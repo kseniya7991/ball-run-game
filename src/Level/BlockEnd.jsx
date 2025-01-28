@@ -34,25 +34,25 @@ export function BlockEnd({
                 </Float>
 
                 <RigidBody type="fixed" position={position} ref={end}>
-                    <CuboidCollider
-                        args={[0.1, 1, 2]}
-                        position={[-2, 1, 0]}
-                        restitution={0.2}
+                     <CuboidCollider
+                        args={[0.1, 3, 2]}
+                        position={[-2, 1.7, 0]}
+                        restitution={0}
                         friction={1}
                     />
                     <CuboidCollider
-                        args={[0.1, 1, 2]}
-                        position={[2, 1, 0]}
-                        restitution={0.2}
+                        args={[0.1, 3, 2]}
+                        position={[2, 1.7, 0]}
+                        restitution={0}
                         friction={1}
-                    />
+                    /> 
                     <CuboidCollider
-                        args={[2, 1, 0.1]}
-                        position={[0, 1, -2]}
-                        restitution={0.2}
+                        args={[2, 3, 0.1]}
+                        position={[0, 1.7, -2]}
+                        restitution={0}
                         friction={1}
-                    />
-                    <Floor geometry={geometry} material={material} position={[0, 0, 0]} />
+                    /> 
+                    <Floor geometry={geometry} material={material}  />
                 </RigidBody>
             </group>
         </>

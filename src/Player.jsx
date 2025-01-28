@@ -25,7 +25,7 @@ export default function Player() {
     const levelLength = useGame((state) => state.levelLength);
 
     const { "ball color": ballColor } = useControls({
-        "ball color": "#08a3f2",
+        "ball color": "#be3737",
     });
 
     /**
