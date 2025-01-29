@@ -2,6 +2,7 @@ import { useKeyboardControls } from "@react-three/drei";
 import { useEffect, useRef } from "react";
 import useGame from "./stores/useGame";
 import { addEffect } from "@react-three/fiber";
+import Lives from "./Lives";
 
 export default function Interface() {
     const time = useRef();
@@ -19,16 +20,16 @@ export default function Interface() {
             const state = useGame.getState();
 
             let elapsedTime = 0;
-            if(state.phase === "playing") {
+            if (state.phase === "playing") {
                 elapsedTime = Date.now() - state.startTime;
-            } else if(state.phase === "ended") {
+            } else if (state.phase === "ended") {
                 elapsedTime = state.endTime - state.startTime;
             }
 
             elapsedTime /= 1000;
             elapsedTime = elapsedTime.toFixed(2);
 
-            if(time.current) time.current.textContent = elapsedTime;
+            if (time.current) time.current.textContent = elapsedTime;
         });
 
         return () => {
@@ -44,8 +45,13 @@ export default function Interface() {
                     0.00
                 </div>
 
+                {/* Lives */}
+                <div className="interface__lives">
+                    <Lives />
+                </div>
+
                 {/* Restart */}
-                {phase === "ended" && (
+                {(phase === "ended" || phase === "failed") && (
                     <div className="interface__restart" onClick={restart}>
                         Restart
                     </div>

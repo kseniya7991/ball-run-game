@@ -55,38 +55,61 @@ body,
     cursor: pointer;
 }
 
+.interface__lives {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+    width: max-content;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+.interface__lives svg.hidden .background {
+    animation: hideHeart 0.5s forwards;
+}
+
+@keyframes hideHeart {
+    0%,
+    50%,
+    70% {
+        opacity: 1;
+    }
+    25%,
+    60%,
+    100% {
+        opacity: 0;
+    }
+}
+
 /**
  * Controls
  */
- .interface__controls
- {
-     position: absolute;
-     bottom: 10%;
-     left: 0;
-     width: 100%;
- }
- 
- .interface__controls .raw
- {
-     display: flex;
-     justify-content: center;
- }
- 
- .interface__controls .key
- {
-     width: 40px;
-     height: 40px;
-     margin: 4px;
-     border: 2px solid #ffffff;
-     background: #ffffff44;
- }
- 
- .interface__controls .key.large
- {
-     width: 144px;
- }
- 
- .interface__controls .key.active
- {
-     background: #ffffff99;
- }
+.interface__controls {
+    position: absolute;
+    bottom: 10%;
+    left: 0;
+    width: 100%;
+}
+
+.interface__controls .raw {
+    display: flex;
+    justify-content: center;
+}
+
+.interface__controls .key {
+    width: 40px;
+    height: 40px;
+    margin: 4px;
+    border: 2px solid #ffffff;
+    background: #ffffff44;
+}
+
+.interface__controls .key.large {
+    width: 144px;
+}
+
+.interface__controls .key.active {
+    background: #ffffff99;
+}
