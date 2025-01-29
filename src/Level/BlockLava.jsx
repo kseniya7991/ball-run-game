@@ -32,7 +32,7 @@ export function BlockLava({
 }) {
     const lavaMaterial = useRef();
     const startBurning = useGame((state) => state.startBurning);
-    const end = useGame((state) => state.end);
+    const fail = useGame((state) => state.fail);
     const lavaSize = 2;
     const floorSize = (4 - lavaSize) / 2;
     const marginFloor = floorSize / 2 + lavaSize / 2;   
@@ -48,7 +48,7 @@ export function BlockLava({
 
     const handleCollision = (event) => {
         startBurning();
-        end();
+        fail();
     };
 
     return (

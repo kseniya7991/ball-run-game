@@ -12,6 +12,33 @@ import { BlockLava } from "./BlockLava";
 import { BlockNarrow } from "./BlockNarrow";
 import { BlockSeesaw } from "./BlockSeesaw";
 
+export const blockFunctions = {
+    BlockSpinner: {
+        component: BlockSpinner,
+        length: 4,
+    },
+    BlockLimbo: {
+        component: BlockLimbo,
+        length: 4,
+    },
+    BlockAxe: {
+        component: BlockAxe,
+        length: 4,
+    },
+    BlockLava: {
+        component: BlockLava,
+        length: 4,
+    },
+    BlockNarrow: {
+        component: BlockNarrow,
+        length: 4,
+    },
+    BlockSeesaw: {
+        component: BlockSeesaw,
+        length: 8,
+    },
+};
+
 export const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 export const levelMaterials = {
     floor1: new THREE.MeshStandardMaterial({ color: "limegreen" }),
@@ -23,28 +50,31 @@ export const levelMaterials = {
 
 export function Level({
     count = 5,
-    types = [BlockSpinner, BlockLimbo, BlockAxe, BlockLava, BlockNarrow, BlockSeesaw],
     seed = 0,
+    config,
 }) {
     let positionZ = 0;
     let length = 0;
+
     const updateLevelLength = useGame((state) => state.updateLevelLength);
+    const currentLevel = useGame.getState().currentLevel;
+    const availableTypes = config[currentLevel].types;
+
     const blocks = useMemo(
         () =>
-            Array.from({ length: count }, () => {
-                let multiplier = 1;
-                const block = types[Math.floor(Math.random() * types.length)];
-                if (block.name === "BlockSeesaw") {
-                    multiplier = 2;
-                }
-                length += 4 * multiplier;
-                return block;
+            Array.from({ length: config[currentLevel].blocks }, () => {
+                const block =
+                    blockFunctions[
+                        availableTypes[Math.floor(Math.random() * availableTypes.length)]
+                    ];
+
+                length += block.length;
+                return block.component;
             }),
-        [count, types, seed]
+        [count, seed, config]
     );
 
     useEffect(() => {
-        console.log("update level length", length, positionZ - 4);
         updateLevelLength(length);
     }, [length]);
 
@@ -63,7 +93,7 @@ export function Level({
                     return <Block key={Date.now() + i} position={[0, 0, positionZ]} />;
                 }
             })}
-    
+            
             <BlockEnd position={[0, 0, positionZ - 4]} key={positionZ} />
             <Walls length={count + 2} />
         </>

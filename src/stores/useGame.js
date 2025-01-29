@@ -4,19 +4,31 @@ import { subscribeWithSelector } from "zustand/middleware";
 export default create(
     subscribeWithSelector((set) => {
         return {
-            blocksCount: 1,
             blocksSeed: 0,
-            levelLength: 0,
-            updateLevelLength: (val) =>
-                set((state) => {
-                    return { levelLength: val };
-                }),
+
+            /**
+             * Blocks count
+             */
+            blocksCount: 1,
 
             updateBlocksCount: (val) =>
                 set((state) => {
                     return { blocksCount: val };
                 }),
 
+            /**
+             * Level Length
+             */
+
+            levelLength: 0,
+            updateLevelLength: (val) =>
+                set((state) => {
+                    return { levelLength: val };
+                }),
+
+            /**
+             * Burning
+             */
             isBurning: false,
             startBurning: () =>
                 set((state) => {
@@ -25,6 +37,41 @@ export default create(
             endBurning: () =>
                 set((state) => {
                     return { isBurning: false };
+                }),
+
+            /**
+             * Levels
+             */
+            currentLevel: 1,
+            levels: 5,
+            nextLevel: () =>
+                set((state) => {
+                    return state.phase === "playing"
+                        ? {
+                              currentLevel:
+                                  state.currentLevel + 1 <= state.levels
+                                      ? state.currentLevel + 1
+                                      : 1,
+                          }
+                        : {};
+                }),
+
+            /**
+             * Lives
+             */
+            lives: 3,
+            maxLives: 3,
+
+            resetLives: () =>
+                set((state) => {
+                    return { lives: state.maxLives };
+                }),
+
+            increaseLives: () =>
+                set((state) => {
+                    return {
+                        lives: state.lives + 1 <= state.maxLives ? state.lives + 1 : state.maxLives,
+                    };
                 }),
 
             /**
@@ -43,7 +90,7 @@ export default create(
                 ),
             restart: () =>
                 set((state) =>
-                    state.phase === "playing" || state.phase === "ended"
+                    state.phase === "playing" || state.phase === "ended" || state.phase === "failed"
                         ? { phase: "ready", blocksSeed: Math.random() }
                         : {}
                 ),
@@ -51,6 +98,20 @@ export default create(
                 set((state) =>
                     state.phase === "playing" ? { phase: "ended", endTime: Date.now() } : {}
                 ),
+
+            fail: () =>
+                set((state) => {
+                    const nextLives = state.lives - 1 < 0 ? state.maxLives : state.lives - 1;
+                    const nextLevel = state.lives - 1 < 0 ? 1 : state.currentLevel;
+                    return state.phase === "playing"
+                        ? {
+                              phase: "failed",
+                              endTime: Date.now(),
+                              lives: nextLives,
+                              currentLevel: nextLevel,
+                          }
+                        : {};
+                }),
         };
     })
 );

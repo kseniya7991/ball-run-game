@@ -23,6 +23,8 @@ export default function Player() {
     const isBurning = useGame((state) => state.isBurning);
     const endBurning = useGame((state) => state.endBurning);
     const levelLength = useGame((state) => state.levelLength);
+    const nextLevel = useGame((state) => state.nextLevel);
+    const fail = useGame((state) => state.fail);
 
     const { "ball color": ballColor } = useControls({
         "ball color": "#be3737",
@@ -91,8 +93,8 @@ export default function Player() {
         const impulse = { x: 0, y: 0, z: 0 };
         const torque = { x: 0, y: 0, z: 0 };
 
-        const impulseStrength = 0.6 * delta;
-        const torqueStrength = 0.2 * delta;
+        const impulseStrength = 0.5 * delta;
+        const torqueStrength = 0.1 * delta;
 
         if (forward) {
             impulse.z -= impulseStrength;
@@ -144,8 +146,14 @@ export default function Player() {
         /**
          * Phases
          */
-        if(bodyPosition.z < - (levelLength + 2)) end();
-        if (bodyPosition.y < -4) restart();
+        if (bodyPosition.z < -(levelLength + 2)) {
+            nextLevel();
+            end();
+        }
+        if (bodyPosition.y < -4) {
+            fail();
+            restart();
+        }
     });
 
     return (

@@ -62,8 +62,8 @@ export function BlockSeesaw({
                 ref={plank}
                 colliders={"cuboid"}
                 position-y={0.6}
-                friction={0}
-                restitution={0.2}
+                friction={0.2}
+                restitution={1}
                 rotation={[0.15, 0, 0]}>
                 <mesh castShadow receiveShadow material={material}>
                     <boxGeometry args={[0.5, 0.2, 7.5]} />
