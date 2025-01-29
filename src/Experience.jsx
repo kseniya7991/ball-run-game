@@ -1,4 +1,4 @@
-import { OrbitControls } from "@react-three/drei";
+import { OrbitControls, Sky } from "@react-three/drei";
 import Lights from "./Lights.jsx";
 import { Level } from "./Level/Level.jsx";
 import { Physics } from "@react-three/rapier";
@@ -11,14 +11,29 @@ const config = {
     1: {
         blocks: 5,
         types: ["BlockSpinner", "BlockLimbo", "BlockAxe"],
+        sky: {
+            turbidity: 3,
+            rayleigh: 4,
+            sunY: -0.05
+        }
     },
     2: {
         blocks: 8,
         types: ["BlockSpinner", "BlockLimbo", "BlockAxe", "BlockNarrow"],
+        sky: {
+            turbidity: 3,
+            rayleigh: 2,
+            sunY: -0.05
+        }
     },
     3: {
         blocks: 10,
         types: ["BlockSpinner", "BlockLimbo", "BlockAxe", "BlockNarrow", "BlockLava"],
+        sky: {
+            turbidity: 3,
+            rayleigh: 2,
+            sunY: -0.01
+        }
     },
     4: {
         blocks: 12,
@@ -30,6 +45,11 @@ const config = {
             "BlockLava",
             "BlockSeesaw",
         ],
+        sky: {
+            turbidity: 0.3,
+            rayleigh: 1,
+            sunY: -0.01
+        }
     },
     5: {
         blocks: 15,
@@ -44,34 +64,25 @@ const config = {
             "BlockSeesaw",
             "BlockSeesaw",
         ],
+        sky: {
+            turbidity: 0.02,
+            rayleigh: 0.3,
+            sunY: 0.3
+        }
     },
 };
 
 export default function Experience() {
     const blocksCount = useGame((state) => state.blocksCount);
     const blocksSeed = useGame((state) => state.blocksSeed);
-    const updateBlocksCount = useGame((state) => state.updateBlocksCount);
-
-    const { "blocks count": blocksCountValue } = useControls({
-        "blocks count": {
-            value: 1,
-            step: 1,
-            min: 1,
-            max: 20,
-        },
-    });
-    
-
-    useEffect(() => {
-        updateBlocksCount(blocksCountValue);
-    }, [blocksCountValue]);
 
     return (
         <>
-            <OrbitControls makeDefault />
+            {/* <OrbitControls makeDefault /> */}
 
-            {/* <color args={["#bdedfc"]} attach="background" /> */}
-            <color args={["#242424"]} attach="background" />
+            <color args={["#bdedfc"]} attach="background" />
+            {/* <color args={["#242424"]} attach="background" /> */}
+
 
             <Physics debug>
                 <Lights />

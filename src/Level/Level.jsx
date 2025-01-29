@@ -1,12 +1,12 @@
 import * as THREE from "three";
 import { useMemo, useEffect } from "react";
 import useGame from "../stores/useGame";
+import { Sky } from "@react-three/drei";
 
 import { BlockStart } from "./BlockStart";
 import { BlockEnd } from "./BlockEnd";
 import { BlockLimbo } from "./BlockLimbo";
 import { BlockAxe } from "./BlockAxe";
-import { Walls } from "./Walls";
 import { BlockSpinner } from "./BLockSpinner";
 import { BlockLava } from "./BlockLava";
 import { BlockNarrow } from "./BlockNarrow";
@@ -44,15 +44,10 @@ export const levelMaterials = {
     floor1: new THREE.MeshStandardMaterial({ color: "limegreen" }),
     floor2: new THREE.MeshStandardMaterial({ color: "greenyellow" }),
     obstacle: new THREE.MeshStandardMaterial({ color: "mediumpurple" }),
-    wall: new THREE.MeshStandardMaterial({ color: "#798e95" }),
     lava: new THREE.MeshStandardMaterial({ color: "#FF6600" }),
 };
 
-export function Level({
-    count = 5,
-    seed = 0,
-    config,
-}) {
+export function Level({ count = 5, seed = 0, config }) {
     let positionZ = 0;
     let length = 0;
 
@@ -82,6 +77,15 @@ export function Level({
         <>
             <BlockStart position={[0, 0, 0]} />
 
+            <Sky
+                distance={450000}
+                sunPosition={[1, config[currentLevel].sky.sunY, 1]}
+                mieCoefficient={0.0}
+                mieDirectionalG={0.1} 
+                rayleigh={config[currentLevel].sky.rayleigh}
+                turbidity={config[currentLevel].sky.turbidity} 
+            />
+
             {blocks.map((Block, i) => {
                 if (Block.name === "BlockSeesaw") {
                     let posZ = positionZ - 6;
@@ -93,9 +97,8 @@ export function Level({
                     return <Block key={Date.now() + i} position={[0, 0, positionZ]} />;
                 }
             })}
-            
+
             <BlockEnd position={[0, 0, positionZ - 4]} key={positionZ} />
-            <Walls length={count + 2} />
         </>
     );
 }

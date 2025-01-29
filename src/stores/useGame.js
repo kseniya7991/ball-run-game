@@ -11,11 +11,7 @@ export default create(
              */
             blocksCount: 1,
 
-            updateBlocksCount: (val) =>
-                set((state) => {
-                    return { blocksCount: val };
-                }),
-
+            
             /**
              * Level Length
              */
