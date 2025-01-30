@@ -1,21 +1,21 @@
-import { useRapier, RigidBody } from "@react-three/rapier";
-import { useFrame } from "@react-three/fiber";
-import { useKeyboardControls, Sparkles } from "@react-three/drei";
-import { useRef, useEffect, useState, use } from "react";
 import * as THREE from "three";
 import useGame from "./stores/useGame";
+import { useRapier, RigidBody } from "@react-three/rapier";
+import { useFrame } from "@react-three/fiber";
+import { useKeyboardControls } from "@react-three/drei";
+import { useRef, useEffect, useState } from "react";
 import { useControls } from "leva";
 import { LavaSparkles } from "./Level/LavaSparkles";
 
 export default function Player() {
     const body = useRef();
-    const [bodyPosition, setBodyPosition] = useState({ x: 0, y: 1, z: 0 });
     const [subscribeKeys, getKeys] = useKeyboardControls();
     const { rapier, world } = useRapier();
 
     const [smoothCameraPosition] = useState(() => new THREE.Vector3(10, 10, 10));
     const [smoothCameraTarget] = useState(() => new THREE.Vector3());
     const [burnedColor] = useState(() => "#272727");
+    const [isCollidingWithLimbo, setIsCollidingWithLimbo] = useState(false);
 
     const start = useGame((state) => state.start);
     const restart = useGame((state) => state.restart);
@@ -67,9 +67,8 @@ export default function Player() {
          * Subscribe to jump event
          */
         const unsubscribeJump = subscribeKeys(
-            (state) => state.jump, // selector
+            (state) => state.jump,
             (val) => {
-                // what to do
                 if (val) jump();
             }
         );
@@ -89,12 +88,13 @@ export default function Player() {
      * Controls
      */
     useFrame((state, delta) => {
-        const { forward, backward, leftward, rightward, jump } = getKeys();
+        const { forward, backward, leftward, rightward } = getKeys();
+
         const impulse = { x: 0, y: 0, z: 0 };
         const torque = { x: 0, y: 0, z: 0 };
 
         const impulseStrength = 0.5 * delta;
-        const torqueStrength = 0.1 * delta;
+        const torqueStrength = 0.15 * delta;
 
         if (forward) {
             impulse.z -= impulseStrength;
@@ -124,10 +124,6 @@ export default function Player() {
         const bodyPosition = body.current?.translation();
         if (!bodyPosition) return;
 
-        const bodyPositionVec = new THREE.Vector3();
-        bodyPositionVec.copy(bodyPosition);
-        setBodyPosition(bodyPositionVec);
-
         const cameraPosition = new THREE.Vector3();
         cameraPosition.copy(bodyPosition);
         cameraPosition.z += 3.25;
@@ -146,7 +142,7 @@ export default function Player() {
         /**
          * Phases
          */
-        if (bodyPosition.z < -(levelLength + 2)) {
+        if (bodyPosition.z < -(levelLength + 2) && bodyPosition.y > 0) {
             nextLevel();
             end();
         }
@@ -154,7 +150,21 @@ export default function Player() {
             fail();
             restart();
         }
+
+        if (
+            bodyPosition.y < 0 &&
+            -2 < bodyPosition.x &&
+            bodyPosition.x < 2 &&
+            isCollidingWithLimbo
+        ) {
+            body.current?.setTranslation({ x: bodyPosition.x, y: 0.5, z: bodyPosition.z });
+        }
     });
+
+    const handleCollision = (event, reset = false) => {
+        if (event.other.rigidBodyObject.name === "Limbo") setIsCollidingWithLimbo(true);
+        if (reset) setIsCollidingWithLimbo(false);
+    };
 
     return (
         <>
@@ -162,12 +172,14 @@ export default function Player() {
                 <RigidBody
                     ref={body}
                     canSleep={false}
-                    position={[0, 0.5, 0]}
                     colliders="ball"
                     restitution={0.2}
                     friction={1}
                     linearDamping={0.5}
-                    angularDamping={0.5}>
+                    angularDamping={0.5}
+                    position={[0, 1, 0]}
+                    onCollisionEnter={handleCollision}
+                    onCollisionExit={(e) => handleCollision(e, true)}>
                     <mesh castShadow>
                         <icosahedronGeometry args={[0.3, 1]} />
                         <meshStandardMaterial

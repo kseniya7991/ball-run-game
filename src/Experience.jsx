@@ -1,11 +1,9 @@
-import { OrbitControls, Sky } from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
 import Lights from "./Lights.jsx";
 import { Level } from "./Level/Level.jsx";
 import { Physics } from "@react-three/rapier";
 import Player from "./Player";
 import useGame from "./stores/useGame";
-import { useControls } from "leva";
-import { useEffect } from "react";
 
 const config = {
     1: {
@@ -78,13 +76,12 @@ export default function Experience() {
 
     return (
         <>
-            {/* <OrbitControls makeDefault /> */}
+            <OrbitControls makeDefault />
 
             <color args={["#bdedfc"]} attach="background" />
             {/* <color args={["#242424"]} attach="background" /> */}
 
-
-            <Physics debug>
+            <Physics debug >
                 <Lights />
                 <Level count={blocksCount} seed={blocksSeed} config={config} />
                 <Player />

@@ -86,7 +86,7 @@ export function Level({ count = 5, seed = 0, config }) {
                 turbidity={config[currentLevel].sky.turbidity} 
             />
 
-            {blocks.map((Block, i) => {
+             {blocks.map((Block, i) => {
                 if (Block.name === "BlockSeesaw") {
                     let posZ = positionZ - 6;
                     positionZ += -8;
@@ -96,7 +96,7 @@ export function Level({ count = 5, seed = 0, config }) {
                     positionZ += -4;
                     return <Block key={Date.now() + i} position={[0, 0, positionZ]} />;
                 }
-            })}
+            })} 
 
             <BlockEnd position={[0, 0, positionZ - 4]} key={positionZ} />
         </>

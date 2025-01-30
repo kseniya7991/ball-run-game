@@ -10,14 +10,14 @@ export function Floor({
     friction = 0,
 }) {
     return (
-        <RigidBody type="fixed" restitution={restitution} friction={friction}>
+        <RigidBody type="fixed" restitution={restitution} friction={friction} name="Floor">
             <mesh
                 geometry={geometry}
                 material={material}
                 position={position}
                 receiveShadow
                 scale={scale}
-            />
+            /> 
         </RigidBody>
     );
 }
