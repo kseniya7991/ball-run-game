@@ -44,62 +44,58 @@ export const blockFunctions = {
 };
 
 export default function Experience() {
+    const [phase, setPhase] = useState(null);
+
     const blocksCount = useGame((state) => state.blocksCount);
     const blocksSeed = useGame((state) => state.blocksSeed);
+
     const config = useGame((state) => state.config);
     const updateConfig = useGame((state) => state.updateConfig);
     const isConfigReady = useGame((state) => state.isConfigReady);
 
     useEffect(() => {
         const newConfig = { ...config };
-
-        Object.keys(newConfig).forEach((key) => {
-            console.log(key)
-            Array.from({ length: newConfig[key]?.blocks }, () => {
-                const block =
-                    blockFunctions[
-                        newConfig[key]?.types[Math.floor(Math.random() * config[key]?.types.length)]
-                    ];
+        Object.entries(newConfig).forEach(([key, configKey]) => {
+            const { blocks, types } = configKey;
+            if (!blocks || !types?.length) return;
+            Array.from({ length: blocks }, () => {
+                const block = blockFunctions[types[Math.floor(Math.random() * types.length)]];
                 newConfig[key].finalLength += block.length;
                 newConfig[key].finalBlocks.push(block.component);
-                return block.component;
             });
         });
-
         updateConfig(newConfig);
+
+        return () => {
+            updateConfig(config);
+        };
     }, []);
 
-    const pyramidData = useMemo(() => {
+    const ballsData = useMemo(() => {
         const data = [];
 
-        for (let layer = 0; layer < 50; layer++) {
+        for (let ball = 0; ball < 50; ball++) {
             const position = [
                 Math.random() * 3.5 - 1.75,
-                1 + layer * 0.1,
+                1 + ball * 0.1,
                 Math.random() * 3.5 - 1.75,
             ];
             const hue = Math.random() * 360;
-            const color = `hsl(${hue}, 50%, 50%)`;
-            const key = `${layer}`;
-
             data.push({
-                key,
+                key: ball,
                 position,
-                color,
+                color: `hsl(${hue}, 50%, 50%)`,
             });
         }
-
         return data;
     }, []);
 
-    const [phase, setPhase] = useState(null);
-
     const handlePhaseChange = useCallback(
         (value) => {
-            if(value === "finished") {
-                setTimeout(()=> {
+            if (value === "finished") {
+                setTimeout(() => {
                     setPhase(value);
-                }, 3000)
+                }, 3000);
             }
             if (value === "ready" && phase === "finished") {
                 setPhase(value);
@@ -131,7 +127,6 @@ export default function Experience() {
             <color args={["#191920"]} attach="background" />
 
             <Physics>
-                {/* <fogExp2 attach="fog" color="#E0E7E9" density={0.02} /> */}
                 <Lights isFinish={phase === "finished"} />
                 {phase !== "finished" && (
                     <>
@@ -143,7 +138,7 @@ export default function Experience() {
                     </>
                 )}
 
-                {isConfigReady && <World pyramidData={pyramidData} />}
+                {isConfigReady && <World ballsData={ballsData} />}
 
                 <Player />
             </Physics>
