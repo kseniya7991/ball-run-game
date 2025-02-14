@@ -15,6 +15,13 @@ export default function Interface() {
     const restart = useGame((state) => state.restart);
     const phase = useGame((state) => state.phase);
 
+    const nextLevel = useGame((state) => state.nextLevel);
+
+    const goToTheNextLevel = () => {
+        restart();
+        nextLevel();
+    };
+
     useEffect(() => {
         const unsubscribeEffect = addEffect(() => {
             const state = useGame.getState();
@@ -52,7 +59,7 @@ export default function Interface() {
 
                 {/* Restart */}
                 {(phase === "ended" || phase === "failed") && (
-                    <div className="interface__restart" onClick={restart}>
+                    <div className="interface__restart" onClick={goToTheNextLevel}>
                         Restart
                     </div>
                 )}
