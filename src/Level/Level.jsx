@@ -52,41 +52,21 @@ export function Level({ count = 5, seed = 0, config }) {
     let length = 0;
 
     const updateLevelLength = useGame((state) => state.updateLevelLength);
-    const currentLevel = useGame.getState().currentLevel;
-    const availableTypes = config[currentLevel].types;
+    const currentLevel = useGame((state) => state.currentLevel);
+    const finalConfig = useGame.getState().config;
 
-    const blocks = useMemo(
-        () =>
-            Array.from({ length: config[currentLevel].blocks }, () => {
-                const block =
-                    blockFunctions[
-                        availableTypes[Math.floor(Math.random() * availableTypes.length)]
-                    ];
-
-                length += block.length;
-                return block.component;
-            }),
-        [count, seed, config]
-    );
+    const finalBlocks = finalConfig[currentLevel]?.finalBlocks;
+    const levelLength = finalConfig[currentLevel]?.finalLength;
 
     useEffect(() => {
-        updateLevelLength(length);
-    }, [length]);
+        updateLevelLength(levelLength);
+    }, [levelLength]);
 
     return (
         <>
             <BlockStart position={[0, 0, 0]} />
 
-            <Sky
-                distance={450000}
-                sunPosition={[1, config[currentLevel].sky.sunY, 1]}
-                mieCoefficient={0.0}
-                mieDirectionalG={0.1} 
-                rayleigh={config[currentLevel].sky.rayleigh}
-                turbidity={config[currentLevel].sky.turbidity} 
-            />
-
-             {blocks.map((Block, i) => {
+            {finalBlocks.map((Block, i) => {
                 if (Block.name === "BlockSeesaw") {
                     let posZ = positionZ - 6;
                     positionZ += -8;
@@ -96,7 +76,7 @@ export function Level({ count = 5, seed = 0, config }) {
                     positionZ += -4;
                     return <Block key={Date.now() + i} position={[0, 0, positionZ]} />;
                 }
-            })} 
+            })}
 
             <BlockEnd position={[0, 0, positionZ - 4]} key={positionZ} />
         </>
