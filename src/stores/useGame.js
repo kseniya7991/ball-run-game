@@ -1,6 +1,77 @@
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 
+const initialConfig = {
+    1: {
+        blocks: 1,
+        types: ["BlockSpinner", "BlockLimbo", "BlockAxe"],
+        sky: {
+            turbidity: 3,
+            rayleigh: 4,
+            sunY: -0.05,
+            sunZ: 0.2,
+        },
+        finalLength: 0,
+        finalBlocks: [],
+    },
+    2: {
+        blocks: 2,
+        types: ["BlockLimbo"],
+        sky: {
+            turbidity: 3,
+            rayleigh: 2,
+            sunY: -0.05,
+        },
+        finalLength: 0,
+        finalBlocks: [],
+    },
+    // 3: {
+    //     blocks: 10,
+    //     types: ["BlockSpinner", "BlockLimbo", "BlockAxe", "BlockNarrow", "BlockLava"],
+    //     sky: {
+    //         turbidity: 3,
+    //         rayleigh: 2,
+    //         sunY: -0.01,
+    //     },
+    // },
+    // 4: {
+    //     blocks: 12,
+    //     types: [
+    //         "BlockSpinner",
+    //         "BlockLimbo",
+    //         "BlockAxe",
+    //         "BlockNarrow",
+    //         "BlockLava",
+    //         "BlockSeesaw",
+    //     ],
+    //     sky: {
+    //         turbidity: 0.3,
+    //         rayleigh: 1,
+    //         sunY: -0.01,
+    //     },
+    // },
+    // 5: {
+    //     blocks: 15,
+    //     types: [
+    //         "BlockSpinner",
+    //         "BlockLimbo",
+    //         "BlockAxe",
+    //         "BlockNarrow",
+    //         "BlockNarrow",
+    //         "BlockLava",
+    //         "BlockLava",
+    //         "BlockSeesaw",
+    //         "BlockSeesaw",
+    //     ],
+    //     sky: {
+    //         turbidity: 0.02,
+    //         rayleigh: 0.3,
+    //         sunY: 0.3,
+    //         sunZ: 0.2,
+    //     },
+    // },
+};
+
 export default create(
     subscribeWithSelector((set) => {
         return {
@@ -11,7 +82,6 @@ export default create(
              */
             blocksCount: 1,
 
-            
             /**
              * Level Length
              */
@@ -39,10 +109,10 @@ export default create(
              * Levels
              */
             currentLevel: 1,
-            levels: 5,
+            levels: 2,
             nextLevel: () =>
                 set((state) => {
-                    return state.phase === "playing"
+                    return state.phase === "ready"
                         ? {
                               currentLevel:
                                   state.currentLevel + 1 <= state.levels
@@ -50,6 +120,11 @@ export default create(
                                       : 1,
                           }
                         : {};
+                }),
+
+            resetLevels: () =>
+                set((state) => {
+                    return { currentLevel: 1 };
                 }),
 
             /**
@@ -86,9 +161,7 @@ export default create(
                 ),
             restart: () =>
                 set((state) =>
-                    state.phase === "playing" || state.phase === "ended" || state.phase === "failed"
-                        ? { phase: "ready", blocksSeed: Math.random() }
-                        : {}
+                    state.phase !== "ready" ? { phase: "ready", blocksSeed: Math.random() } : {}
                 ),
             end: () =>
                 set((state) =>
@@ -108,6 +181,15 @@ export default create(
                           }
                         : {};
                 }),
+
+            finish: () => set((state) => (state.phase !== "finished" ? { phase: "finished" } : {})),
+
+            /**
+             * Config
+             */
+            config: initialConfig,
+            isConfigReady: false,
+            updateConfig: (newConfig) => set((state) => {return { config: newConfig, isConfigReady: true }}),
         };
     })
 );
