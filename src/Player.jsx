@@ -3,7 +3,7 @@ import useGame from "./stores/useGame";
 import { useRapier, RigidBody } from "@react-three/rapier";
 import { useFrame } from "@react-three/fiber";
 import { useKeyboardControls } from "@react-three/drei";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useMemo } from "react";
 import { useControls } from "leva";
 import { LavaSparkles } from "./Level/LavaSparkles";
 
@@ -11,6 +11,7 @@ export default function Player() {
     const body = useRef();
     const [subscribeKeys, getKeys] = useKeyboardControls();
     const { rapier, world } = useRapier();
+    const lastLevel = useMemo(() => useGame.getState().levels, []);
 
     const [smoothCameraPosition] = useState(() => new THREE.Vector3(10, 10, 10));
     const [smoothCameraTarget] = useState(() => new THREE.Vector3());
@@ -20,11 +21,15 @@ export default function Player() {
     const start = useGame((state) => state.start);
     const restart = useGame((state) => state.restart);
     const end = useGame((state) => state.end);
+
     const isBurning = useGame((state) => state.isBurning);
     const endBurning = useGame((state) => state.endBurning);
+
+    const phase = useGame((state) => state.phase);
     const levelLength = useGame((state) => state.levelLength);
-    const nextLevel = useGame((state) => state.nextLevel);
+
     const fail = useGame((state) => state.fail);
+    const finish = useGame((state) => state.finish);
 
     const { "ball color": ballColor } = useControls({
         "ball color": "#be3737",
@@ -36,7 +41,7 @@ export default function Player() {
     const jump = () => {
         const origin = body.current.translation();
         origin.y -= 0.31;
-        const direction = { x: 0, y: -1, z: 0 };
+        const direction = { x: 0, y: -5, z: 0 };
 
         const ray = new rapier.Ray(origin, direction);
         const hit = world.castRay(ray, 10, true);
@@ -120,37 +125,40 @@ export default function Player() {
     /**
      * Camera
      */
+
+
     useFrame((state, delta) => {
         const bodyPosition = body.current?.translation();
         if (!bodyPosition) return;
 
-        const cameraPosition = new THREE.Vector3();
-        cameraPosition.copy(bodyPosition);
-        cameraPosition.z += 3.25;
-        cameraPosition.y += 0.8;
+        const cameraPosition = getCameraPosition(state, bodyPosition);
 
         const cameraTarget = new THREE.Vector3();
         cameraTarget.copy(bodyPosition);
         cameraTarget.y += 0.25;
 
-        smoothCameraPosition.lerp(cameraPosition, 5 * delta);
-        smoothCameraTarget.lerp(cameraTarget, 5 * delta);
+        smoothCameraPosition.lerp(cameraPosition, lerpStrength * delta);
+        smoothCameraTarget.lerp(cameraTarget, lerpStrength * delta);
 
         state.camera.position.copy(smoothCameraPosition);
         state.camera.lookAt(smoothCameraTarget);
-
         /**
          * Phases
          */
         if (bodyPosition.z < -(levelLength + 2) && bodyPosition.y > 0) {
-            nextLevel();
-            end();
+            if (useGame.getState().currentLevel === lastLevel) {
+                finish();
+            } else {
+                end();
+            }
         }
-        if (bodyPosition.y < -4) {
+
+        if (bodyPosition.y < -4 && phase !== "finished") {
             fail();
             restart();
         }
 
+        // Fixes moments when limbo obstacle presses ball
         if (
             bodyPosition.y < 0 &&
             -2 < bodyPosition.x &&
@@ -160,6 +168,37 @@ export default function Player() {
             body.current?.setTranslation({ x: bodyPosition.x, y: 0.5, z: bodyPosition.z });
         }
     });
+
+    let finishLerpDuration = 3;
+    let finishLerpTime = null;
+    let lerpStrength = 5;
+    
+    const getCameraPosition = (state, bodyPosition) => {
+        const cameraPosition = new THREE.Vector3();
+        cameraPosition.copy(bodyPosition);
+       
+        const defaultLerpStrength = 5;
+        const finishLerpStrength = 2;
+
+        // Move camera upper when its finished phase
+        if (phase === "finished") {
+            cameraPosition.z += 6;
+            cameraPosition.y += 8;
+
+            if (!finishLerpTime) finishLerpTime = state.clock.getElapsedTime();
+
+            let elapsedTime = state.clock.getElapsedTime() - finishLerpTime;
+            lerpStrength = elapsedTime < finishLerpDuration ? finishLerpStrength : defaultLerpStrength;
+        } else {
+            cameraPosition.z += 3.25;
+            cameraPosition.y += 0.8;
+
+            lerpStrength = defaultLerpStrength;
+            finishLerpTime = null;
+        }
+
+        return cameraPosition;
+    };
 
     const handleCollision = (event, reset = false) => {
         if (event.other.rigidBodyObject.name === "Limbo") setIsCollidingWithLimbo(true);
