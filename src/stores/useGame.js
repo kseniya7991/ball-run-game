@@ -4,7 +4,7 @@ import { subscribeWithSelector } from "zustand/middleware";
 const initialConfig = {
     1: {
         blocks: 1,
-        types: ["BlockSpinner", "BlockLimbo", "BlockAxe"],
+        types: ["BlockLimbo"],
         sky: {
             turbidity: 3,
             rayleigh: 4,
@@ -14,17 +14,17 @@ const initialConfig = {
         finalLength: 0,
         finalBlocks: [],
     },
-    2: {
-        blocks: 2,
-        types: ["BlockLimbo"],
-        sky: {
-            turbidity: 3,
-            rayleigh: 2,
-            sunY: -0.05,
-        },
-        finalLength: 0,
-        finalBlocks: [],
-    },
+    // 2: {
+    //     blocks: 2,
+    //     types: ["BlockLimbo"],
+    //     sky: {
+    //         turbidity: 3,
+    //         rayleigh: 2,
+    //         sunY: -0.05,
+    //     },
+    //     finalLength: 0,
+    //     finalBlocks: [],
+    // },
     // 3: {
     //     blocks: 10,
     //     types: ["BlockSpinner", "BlockLimbo", "BlockAxe", "BlockNarrow", "BlockLava"],
@@ -85,11 +85,15 @@ export default create(
             /**
              * Level Length
              */
-
+            finalLevelLength: 0,
             levelLength: 0,
             updateLevelLength: (val) =>
                 set((state) => {
                     return { levelLength: val };
+                }),
+            updateFinalLevelLength: (val) =>
+                set((state) => {
+                    return { finalLevelLength: val };
                 }),
 
             /**
@@ -109,7 +113,7 @@ export default create(
              * Levels
              */
             currentLevel: 1,
-            levels: 2,
+            levels: 1,
             nextLevel: () =>
                 set((state) => {
                     return state.phase === "ready"
@@ -182,14 +186,19 @@ export default create(
                         : {};
                 }),
 
-            finish: () => set((state) => (state.phase !== "finished" ? { phase: "finished" } : {})),
-
+            finish: () =>
+                set((state) => {
+                    return state.phase !== "finished" ? { phase: "finished" } : {};
+                }),
             /**
              * Config
              */
             config: initialConfig,
             isConfigReady: false,
-            updateConfig: (newConfig) => set((state) => {return { config: newConfig, isConfigReady: true }}),
+            updateConfig: (newConfig) =>
+                set((state) => {
+                    return { config: newConfig, isConfigReady: true };
+                }),
         };
     })
 );
