@@ -25,8 +25,7 @@ const wallMaterial = new THREE.MeshStandardMaterial({
 
 export default function World({ ballsData }) {
     const itemsRef = useRef([]);
-    const levels = useGame.getState().levels;
-    const levelLength = (useGame.getState().config[levels]?.finalLength + 4) / 2;
+    const finalLevelLength = useGame.getState().finalLevelLength;
     const instances = useRef();
 
     const bakedShadow = useLoader(THREE.TextureLoader, "./textures/simpleShadow.jpg");
@@ -60,14 +59,14 @@ export default function World({ ballsData }) {
     return (
         <>
             <fogExp2 attach="fog" color="#191920" density={0.02} />
-            <group position={[0, -10, -levelLength]}>
+            <group position={[0, -10, -finalLevelLength]}>
                 <RigidBody
                     name="floor"
                     type="fixed"
                     friction={0.5}
                     restitution={0.2}
                     onCollisionEnter={handleCollisionEnter}
-                    position-z={-levelLength}>
+                    position-z={-finalLevelLength}>
                     <mesh position={[0, 0, 0]} receiveShadow>
                         <boxGeometry args={[2000, 0.1, 2000]} />
                         <meshStandardMaterial color="#20273b" />
@@ -76,7 +75,7 @@ export default function World({ ballsData }) {
                 </RigidBody>
 
                 <group>
-                    <RigidBody name="box" type="fixed" friction={0.2} position-z={-levelLength}>
+                    <RigidBody name="box" type="fixed" friction={0.2} position-z={-finalLevelLength}>
                         <mesh
                             castShadow
                             position={[-2, 1, 0]}
@@ -115,7 +114,7 @@ export default function World({ ballsData }) {
                         {ballsData.map(({ key, position, color }) => (
                             <group key={key}>
                                 <RigidBody
-                                    position-z={-levelLength}
+                                    position-z={-finalLevelLength}
                                     friction={1}
                                     linearDamping={1}
                                     angularDamping={1}
@@ -145,7 +144,7 @@ export default function World({ ballsData }) {
                                 <mesh
                                     key={i}
                                     position-x={worldPosition.x - 0.2}
-                                    position-z={worldPosition.z + levelLength}
+                                    position-z={worldPosition.z + finalLevelLength}
                                     position-y={0.06}
                                     rotation-z={-0.5}
                                     rotation-x={-Math.PI * 0.5}
