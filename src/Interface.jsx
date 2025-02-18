@@ -19,7 +19,7 @@ export default function Interface() {
 
     const goToTheNextLevel = () => {
         restart();
-        nextLevel();
+        if (phase == "ended") nextLevel();
     };
 
     useEffect(() => {
@@ -48,9 +48,9 @@ export default function Interface() {
         <>
             <div className="interface">
                 {/* Time */}
-                <div ref={time} className="interface__time">
+                {/* <div ref={time} className="interface__time">
                     0.00
-                </div>
+                </div> */}
 
                 {/* Lives */}
                 <div className="interface__lives">
@@ -60,7 +60,7 @@ export default function Interface() {
                 {/* Restart */}
                 {(phase === "ended" || phase === "failed") && (
                     <div className="interface__restart" onClick={goToTheNextLevel}>
-                        Restart
+                       {phase === "failed" ? "Retry" : "Next"}
                     </div>
                 )}
 
