@@ -15,6 +15,7 @@ import { BlockSpinner } from "./Level/BLockSpinner";
 import { BlockLava } from "./Level/BlockLava";
 import { BlockNarrow } from "./Level/BlockNarrow";
 import { BlockSeesaw } from "./Level/BlockSeesaw";
+import { LavaSparkles } from "./Level/LavaSparkles";
 
 export const blockFunctions = {
     BlockSpinner: {
@@ -53,6 +54,9 @@ export default function Experience() {
     const updateConfig = useGame((state) => state.updateConfig);
     const isConfigReady = useGame((state) => state.isConfigReady);
 
+    const levels = useGame.getState().levels;
+    const updateFinalLevelLength = useGame((state) => state.updateFinalLevelLength);
+
     useEffect(() => {
         const newConfig = { ...config };
         Object.entries(newConfig).forEach(([key, configKey]) => {
@@ -65,6 +69,7 @@ export default function Experience() {
             });
         });
         updateConfig(newConfig);
+        updateFinalLevelLength(useGame.getState().config[levels]?.finalLength);
 
         return () => {
             updateConfig(config);
@@ -97,9 +102,9 @@ export default function Experience() {
                     setPhase(value);
                 }, 3000);
             }
-            if (value === "ready" && phase === "finished") {
-                setPhase(value);
-            }
+            // if (value === "ready" && phase === "finished") {
+            //     setPhase(value);
+            // }
         },
         [phase]
     );
