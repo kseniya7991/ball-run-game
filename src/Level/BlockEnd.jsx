@@ -1,8 +1,6 @@
-import { use, useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Float, Text } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
 import { RigidBody, CuboidCollider } from "@react-three/rapier";
-import * as THREE from "three";
 import useGame from "../stores/useGame";
 
 import { boxGeometry, levelMaterials } from "./Level";
@@ -13,18 +11,8 @@ export function BlockEnd({
     material = levelMaterials.floor1,
     position = [0, 0, 0],
 }) {
-    const coin = useRef();
     const end = useRef();
     const phase = useGame((state) => state.phase);
-    // const [countdown, setCountdown] = useState(3);
-    // const [message, setMessage] = useState("");
-
-    useFrame((state, delta) => {
-        const time = state.clock.getElapsedTime();
-        const rotation = new THREE.Quaternion();
-        rotation.setFromEuler(new THREE.Euler(0, time * 1.5, 0));
-        coin.current?.setNextKinematicRotation(rotation);
-    });
 
     const [countdown, setCountdown] = useState(3);
     const [message, setMessage] = useState("");
@@ -71,13 +59,25 @@ export function BlockEnd({
     return (
         <>
             <group>
+                {phase !== "finished" && (
+                    <Float floatIntensity={1.5} rotationIntensity={0.25} position={position}>
+                        <Text
+                            font={"./bebas-neue-v9-latin-regular.woff"}
+                            position={[0, 2, 2]}
+                            scale={phase === "finished" ? 0.5 : 1}>
+                            Finish
+                            <meshBasicMaterial toneMapped={false} />
+                        </Text>
+                    </Float>
+                )}
+
                 <Float
                     floatIntensity={1.5}
                     rotationIntensity={0.25}
                     position={position}
-                    rotation-x={phase === "finished" ? -Math.PI * 0.25 : 0}>
-                    <Text font={phase === "finished" ? "./Days.woff" : "./bebas-neue-v9-latin-regular.woff"} position={[0, 2, 2]} scale={phase === "finished" ? 0.5 : 1}>
-                        {phase === "finished" ? message : "Finish"}
+                    rotation-x={-Math.PI * 0.25}>
+                    <Text font={"./Days.woff"} position={[0, 2, 2]} scale={0.5}>
+                        {message}
                         <meshBasicMaterial toneMapped={false} />
                     </Text>
                 </Float>
@@ -101,6 +101,23 @@ export function BlockEnd({
                         restitution={0}
                         friction={1}
                     />
+                    {phase === "finished" && (
+                        <>
+                            <CuboidCollider
+                                args={[2, 3, 0.1]}
+                                position={[0, 1.7, 2]}
+                                restitution={0}
+                                friction={1}
+                            />
+                            <CuboidCollider
+                                args={[2, 0.1, 2]}
+                                position={[0, 4.5, 0]}
+                                restitution={0}
+                                friction={1}
+                            />
+                        </>
+                    )}
+
                     <Floor geometry={geometry} material={material} />
                 </RigidBody>
             </group>
