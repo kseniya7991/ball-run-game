@@ -29,10 +29,6 @@ export default function Lights({ isFinish = false }) {
         }
     }, [isFinish]);
 
-    useEffect(() => {
-       
-    }, []);
-
     return (
         <>
             <directionalLight
@@ -61,10 +57,7 @@ export default function Lights({ isFinish = false }) {
                         decay={0.2}
                         color="#FFF7E1"
                     />
-                    <object3D
-                        ref={targetRef}
-                        position={[-0.4, -1, 0]}
-                    />
+                    <object3D ref={targetRef} position={[-0.4, -1, 0]} />
                 </group>
             )}
 
