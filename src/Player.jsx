@@ -148,11 +148,10 @@ export default function Player() {
 
         state.camera.position.copy(smoothCameraPosition);
         state.camera.lookAt(smoothCameraTarget);
+        
         /**
          * Phases
          */
-
-        console.log(useGame.getState().currentLevel, lastLevel);
         if (bodyPosition.z < -(levelLength + 2 + 0.4) && bodyPosition.y > 0) {
             if (useGame.getState().currentLevel === lastLevel) {
                 finish();
