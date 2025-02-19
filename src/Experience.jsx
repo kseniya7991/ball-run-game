@@ -54,11 +54,13 @@ export default function Experience() {
     const updateConfig = useGame((state) => state.updateConfig);
     const isConfigReady = useGame((state) => state.isConfigReady);
 
-    const levels = useGame.getState().levels;
+    const setLevels = useGame((state) => state.setLevels);
     const updateFinalLevelLength = useGame((state) => state.updateFinalLevelLength);
 
     useEffect(() => {
         const newConfig = { ...config };
+        const length = Object.keys(newConfig).length;
+
         Object.entries(newConfig).forEach(([key, configKey]) => {
             const { blocks, types } = configKey;
             if (!blocks || !types?.length) return;
@@ -69,7 +71,8 @@ export default function Experience() {
             });
         });
         updateConfig(newConfig);
-        updateFinalLevelLength(useGame.getState().config[levels]?.finalLength);
+        updateFinalLevelLength(useGame.getState().config[length]?.finalLength);
+        setLevels(length);
 
         return () => {
             updateConfig(config);

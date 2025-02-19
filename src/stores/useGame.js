@@ -3,73 +3,52 @@ import { subscribeWithSelector } from "zustand/middleware";
 
 const initialConfig = {
     1: {
-        blocks: 1,
+        blocks: 6,
         types: ["BlockLimbo"],
-        sky: {
-            turbidity: 3,
-            rayleigh: 4,
-            sunY: -0.05,
-            sunZ: 0.2,
-        },
         finalLength: 0,
         finalBlocks: [],
     },
-    // 2: {
-    //     blocks: 2,
-    //     types: ["BlockLimbo"],
-    //     sky: {
-    //         turbidity: 3,
-    //         rayleigh: 2,
-    //         sunY: -0.05,
-    //     },
-    //     finalLength: 0,
-    //     finalBlocks: [],
-    // },
-    // 3: {
-    //     blocks: 10,
-    //     types: ["BlockSpinner", "BlockLimbo", "BlockAxe", "BlockNarrow", "BlockLava"],
-    //     sky: {
-    //         turbidity: 3,
-    //         rayleigh: 2,
-    //         sunY: -0.01,
-    //     },
-    // },
-    // 4: {
-    //     blocks: 12,
-    //     types: [
-    //         "BlockSpinner",
-    //         "BlockLimbo",
-    //         "BlockAxe",
-    //         "BlockNarrow",
-    //         "BlockLava",
-    //         "BlockSeesaw",
-    //     ],
-    //     sky: {
-    //         turbidity: 0.3,
-    //         rayleigh: 1,
-    //         sunY: -0.01,
-    //     },
-    // },
-    // 5: {
-    //     blocks: 15,
-    //     types: [
-    //         "BlockSpinner",
-    //         "BlockLimbo",
-    //         "BlockAxe",
-    //         "BlockNarrow",
-    //         "BlockNarrow",
-    //         "BlockLava",
-    //         "BlockLava",
-    //         "BlockSeesaw",
-    //         "BlockSeesaw",
-    //     ],
-    //     sky: {
-    //         turbidity: 0.02,
-    //         rayleigh: 0.3,
-    //         sunY: 0.3,
-    //         sunZ: 0.2,
-    //     },
-    // },
+    2: {
+        blocks: 8,
+        types: ["BlockSpinner", "BlockLimbo", "BlockAxe"],
+        finalLength: 0,
+        finalBlocks: [],
+    },
+    3: {
+        blocks: 10,
+        types: ["BlockSpinner", "BlockLimbo", "BlockAxe", "BlockNarrow", "BlockLava"],
+        finalLength: 0,
+        finalBlocks: [],
+    },
+    4: {
+        blocks: 12,
+        types: [
+            "BlockSpinner",
+            "BlockLimbo",
+            "BlockAxe",
+            "BlockNarrow",
+            "BlockLava",
+            "BlockSeesaw",
+        ],
+        finalLength: 0,
+        finalBlocks: [],
+    },
+    5: {
+        blocks: 15,
+        types: [
+            "BlockSpinner",
+            "BlockLimbo",
+            "BlockAxe",
+            "BlockNarrow",
+            "BlockNarrow",
+            "BlockLava",
+            "BlockLava",
+            "BlockSeesaw",
+            "BlockSeesaw",
+        ],
+        finalLength: 0,
+        finalBlocks: [],
+    },
 };
 
 export default create(
@@ -113,7 +92,13 @@ export default create(
              * Levels
              */
             currentLevel: 1,
-            levels: 1,
+            levels: 0,
+
+            setLevels: (val) =>
+                set((state) => {
+                    return { levels: val };
+                }),
+
             nextLevel: () =>
                 set((state) => {
                     return state.phase === "ready"

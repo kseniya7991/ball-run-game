@@ -9,15 +9,16 @@ import { LavaSparkles } from "./Level/LavaSparkles";
 
 export default function Player() {
     const body = useRef();
+    const [bodyPosition, setBodyPosition] = useState({ x: 0, y: 1, z: 0 });
     const [subscribeKeys, getKeys] = useKeyboardControls();
     const { rapier, world } = useRapier();
-    const lastLevel = useMemo(() => useGame.getState().levels, []);
-
+    
     const [smoothCameraPosition] = useState(() => new THREE.Vector3(10, 10, 10));
     const [smoothCameraTarget] = useState(() => new THREE.Vector3());
     const [burnedColor] = useState(() => "#272727");
     const [isCollidingWithLimbo, setIsCollidingWithLimbo] = useState(false);
-
+    
+    const lastLevel = useGame((state) => state.levels);
     const start = useGame((state) => state.start);
     const restart = useGame((state) => state.restart);
     const end = useGame((state) => state.end);
@@ -45,6 +46,7 @@ export default function Player() {
 
         const ray = new rapier.Ray(origin, direction);
         const hit = world.castRay(ray, 10, true);
+
         if (hit?.timeOfImpact < 0.15) body.current?.applyImpulse({ x: 0, y: 0.5, z: 0 });
     };
 
@@ -98,8 +100,8 @@ export default function Player() {
         const impulse = { x: 0, y: 0, z: 0 };
         const torque = { x: 0, y: 0, z: 0 };
 
-        const impulseStrength = 0.5 * delta;
-        const torqueStrength = 0.15 * delta;
+        const impulseStrength = 0.6 * delta;
+        const torqueStrength = 0.2 * delta;
 
         if (forward) {
             impulse.z -= impulseStrength;
@@ -126,10 +128,14 @@ export default function Player() {
      * Camera
      */
 
-
     useFrame((state, delta) => {
         const bodyPosition = body.current?.translation();
+        setBodyPosition(body.current?.translation());
         if (!bodyPosition) return;
+
+        const bodyPositionVec = new THREE.Vector3();
+        bodyPositionVec.copy(bodyPosition);
+        setBodyPosition(bodyPositionVec);
 
         const cameraPosition = getCameraPosition(state, bodyPosition);
 
@@ -145,7 +151,9 @@ export default function Player() {
         /**
          * Phases
          */
-        if (bodyPosition.z < -(levelLength + 2) && bodyPosition.y > 0) {
+
+        console.log(useGame.getState().currentLevel, lastLevel);
+        if (bodyPosition.z < -(levelLength + 2 + 0.4) && bodyPosition.y > 0) {
             if (useGame.getState().currentLevel === lastLevel) {
                 finish();
             } else {
@@ -172,11 +180,11 @@ export default function Player() {
     let finishLerpDuration = 3;
     let finishLerpTime = null;
     let lerpStrength = 5;
-    
+
     const getCameraPosition = (state, bodyPosition) => {
         const cameraPosition = new THREE.Vector3();
         cameraPosition.copy(bodyPosition);
-       
+
         const defaultLerpStrength = 5;
         const finishLerpStrength = 2;
 
@@ -188,7 +196,8 @@ export default function Player() {
             if (!finishLerpTime) finishLerpTime = state.clock.getElapsedTime();
 
             let elapsedTime = state.clock.getElapsedTime() - finishLerpTime;
-            lerpStrength = elapsedTime < finishLerpDuration ? finishLerpStrength : defaultLerpStrength;
+            lerpStrength =
+                elapsedTime < finishLerpDuration ? finishLerpStrength : defaultLerpStrength;
         } else {
             cameraPosition.z += 3.25;
             cameraPosition.y += 0.8;
@@ -227,6 +236,7 @@ export default function Player() {
                         />
                     </mesh>
                 </RigidBody>
+
 
                 {isBurning && <LavaSparkles position={bodyPosition} />}
             </group>
