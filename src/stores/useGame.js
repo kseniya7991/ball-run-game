@@ -3,67 +3,67 @@ import { subscribeWithSelector } from "zustand/middleware";
 
 const initialConfig = {
     1: {
-        blocks: 6,
-        types: ["BlockLimbo"],
+        blocks: 1,
+        types: ["BlockAxe"],
         finalLength: 0,
         finalBlocks: [],
     },
-    2: {
-        blocks: 8,
-        types: ["BlockSpinner", "BlockLimbo", "BlockAxe"],
-        finalLength: 0,
-        finalBlocks: [],
-    },
-    3: {
-        blocks: 10,
-        types: ["BlockSpinner", "BlockLimbo", "BlockAxe", "BlockNarrow", "BlockLava"],
-        finalLength: 0,
-        finalBlocks: [],
-    },
-    4: {
-        blocks: 12,
-        types: [
-            "BlockSpinner",
-            "BlockLimbo",
-            "BlockAxe",
-            "BlockNarrow",
-            "BlockLava",
-            "BlockSeesaw",
-        ],
-        finalLength: 0,
-        finalBlocks: [],
-    },
-    5: {
-        blocks: 15,
-        types: [
-            "BlockSpinner",
-            "BlockLimbo",
-            "BlockAxe",
-            "BlockNarrow",
-            "BlockNarrow",
-            "BlockLava",
-            "BlockLava",
-            "BlockSeesaw",
-            "BlockSeesaw",
-        ],
-        finalLength: 0,
-        finalBlocks: [],
-    },
+    // 2: {
+    //     blocks: 8,
+    //     types: ["BlockSpinner", "BlockLimbo", "BlockAxe"],
+    //     finalLength: 0,
+    //     finalBlocks: [],
+    // },
+    // 3: {
+    //     blocks: 10,
+    //     types: ["BlockSpinner", "BlockLimbo", "BlockAxe", "BlockNarrow", "BlockLava"],
+    //     finalLength: 0,
+    //     finalBlocks: [],
+    // },
+    // 4: {
+    //     blocks: 12,
+    //     types: [
+    //         "BlockSpinner",
+    //         "BlockLimbo",
+    //         "BlockAxe",
+    //         "BlockNarrow",
+    //         "BlockLava",
+    //         "BlockSeesaw",
+    //     ],
+    //     finalLength: 0,
+    //     finalBlocks: [],
+    // },
+    // 5: {
+    //     blocks: 15,
+    //     types: [
+    //         "BlockSpinner",
+    //         "BlockLimbo",
+    //         "BlockAxe",
+    //         "BlockNarrow",
+    //         "BlockNarrow",
+    //         "BlockLava",
+    //         "BlockLava",
+    //         "BlockSeesaw",
+    //         "BlockSeesaw",
+    //     ],
+    //     finalLength: 0,
+    //     finalBlocks: [],
+    // },
 };
 
 export default create(
     subscribeWithSelector((set) => {
         return {
+            // Theme
+            theme: "dark",
+            toggleTheme: (val) => set({ theme: val }),
+    
             blocksSeed: 0,
 
-            /**
-             * Blocks count
-             */
+            // Blocks count
             blocksCount: 1,
 
-            /**
-             * Level Length
-             */
+            // Level length
             finalLevelLength: 0,
             levelLength: 0,
             updateLevelLength: (val) =>
@@ -75,9 +75,7 @@ export default create(
                     return { finalLevelLength: val };
                 }),
 
-            /**
-             * Burning
-             */
+            // Burning
             isBurning: false,
             startBurning: () =>
                 set((state) => {
@@ -88,9 +86,7 @@ export default create(
                     return { isBurning: false };
                 }),
 
-            /**
-             * Levels
-             */
+            // Levels
             currentLevel: 1,
             levels: 0,
 
@@ -116,9 +112,7 @@ export default create(
                     return { currentLevel: 1 };
                 }),
 
-            /**
-             * Lives
-             */
+            // Lives
             lives: 3,
             maxLives: 3,
 
@@ -134,15 +128,11 @@ export default create(
                     };
                 }),
 
-            /**
-             * Time
-             */
+            // Time
             startTime: 0,
             endTime: 0,
 
-            /**
-             * Phases
-             */
+           // Phases
             phase: "ready",
             start: () =>
                 set((state) =>
@@ -175,9 +165,8 @@ export default create(
                 set((state) => {
                     return state.phase !== "finished" ? { phase: "finished" } : {};
                 }),
-            /**
-             * Config
-             */
+
+           // Config
             config: initialConfig,
             isConfigReady: false,
             updateConfig: (newConfig) =>

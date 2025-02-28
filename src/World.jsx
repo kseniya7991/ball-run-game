@@ -1,33 +1,18 @@
 import { RigidBody, BallCollider } from "@react-three/rapier";
 import { Instance, Instances } from "@react-three/drei";
-import {  useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import * as THREE from "three";
 import useGame from "./stores/useGame";
 import { useLoader } from "@react-three/fiber";
 
 const wall = new THREE.BoxGeometry(0.2, 2, 4);
-// const wallMaterial = new THREE.MeshPhysicalMaterial({
-//     metalness: 0.1,
-//     roughness: 1,
-//     color: "#fff",
-//     transmission: 1,
-//     ior: 1,
-//     thickness: 0.5,
-//     dispersion: 0,
-//     iridescence: 1,
-//     iridescenceIOR: 1.05,
-//     specularColor: "green",
-// });
-
-const wallMaterial = new THREE.MeshStandardMaterial({
-    color: "#20273b",
-});
 
 export default function World({ ballsData }) {
     const itemsRef = useRef([]);
     const finalLevelLength = useGame.getState().finalLevelLength;
-    const zPosition = (finalLevelLength + 4) / 2
+    const zPosition = (finalLevelLength + 4) / 2;
     const instances = useRef();
+    const bgColor = useGame((state) => (state.theme === "dark" ? "#20273b" : "#008db0"));
 
     const bakedShadow = useLoader(THREE.TextureLoader, "./textures/simpleShadow.jpg");
 
@@ -37,6 +22,11 @@ export default function World({ ballsData }) {
         transparent: true,
         alphaMap: bakedShadow,
     });
+
+    const wallMaterial = new THREE.MeshStandardMaterial({
+        color: bgColor,
+    });
+    
 
     useEffect(() => {
         setTimeout(() => {
@@ -70,7 +60,7 @@ export default function World({ ballsData }) {
                     position-z={-zPosition}>
                     <mesh position={[0, 0, 0]} receiveShadow>
                         <boxGeometry args={[2000, 0.1, 2000]} />
-                        <meshStandardMaterial color="#20273b" />
+                        <meshStandardMaterial color={bgColor} />
                         {/* <meshStandardMaterial color="#fff" /> */}
                     </mesh>
                 </RigidBody>
@@ -140,7 +130,7 @@ export default function World({ ballsData }) {
                     <group position-z={0}>
                         {Array.from(outBoxBalls.values()).map((item, i) => {
                             const worldPosition = new THREE.Vector3();
-                            item.getWorldPosition(worldPosition); 
+                            item.getWorldPosition(worldPosition);
                             return (
                                 <mesh
                                     key={i}

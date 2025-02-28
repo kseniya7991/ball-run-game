@@ -8,6 +8,7 @@ import World from "./World";
 import { useMemo, useEffect, useState, useCallback } from "react";
 import React from "react";
 import { Perf } from "r3f-perf";
+import { useControls } from "leva";
 
 import { BlockLimbo } from "./Level/BlockLimbo";
 import { BlockAxe } from "./Level/BlockAxe";
@@ -15,7 +16,6 @@ import { BlockSpinner } from "./Level/BLockSpinner";
 import { BlockLava } from "./Level/BlockLava";
 import { BlockNarrow } from "./Level/BlockNarrow";
 import { BlockSeesaw } from "./Level/BlockSeesaw";
-import { LavaSparkles } from "./Level/LavaSparkles";
 
 export const blockFunctions = {
     BlockSpinner: {
@@ -56,6 +56,21 @@ export default function Experience() {
 
     const setLevels = useGame((state) => state.setLevels);
     const updateFinalLevelLength = useGame((state) => state.updateFinalLevelLength);
+
+    const currentTheme = useGame((state) => state.theme);
+    const bgColor = useGame((state) => (state.theme === "dark" ? "#191920" : "#afe0dd"));
+    const toggleTheme = useGame((state) => state.toggleTheme);
+
+    const theme = useControls({
+        theme: {
+            value: currentTheme,
+            options: ["dark", "light"],
+            onChange: (val) => {
+                toggleTheme(val);
+            },
+        },
+    });
+
 
     useEffect(() => {
         const newConfig = { ...config };
@@ -130,9 +145,7 @@ export default function Experience() {
             <Perf position="top-left" />
             <OrbitControls makeDefault />
 
-            <color args={["#bdedfc"]} attach="background" />
-            {/* <color args={["#242424"]} attach="background" /> */}
-            <color args={["#191920"]} attach="background" />
+            <color args={[bgColor]} attach="background" />
 
             <Physics>
                 <Lights isFinish={phase === "finished"} />
@@ -140,7 +153,7 @@ export default function Experience() {
                     <>
                         <mesh position={[0, -5, 0]} rotation={[-Math.PI / 2, 0, 0]}>
                             <planeGeometry args={[500, 500]} />
-                            <meshBasicMaterial color="#191920" toneMapped={false} />
+                            <meshBasicMaterial color={bgColor} toneMapped={false} />
                         </mesh>
                         <Level count={blocksCount} seed={blocksSeed} config={config} />
                     </>
