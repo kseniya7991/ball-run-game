@@ -59,7 +59,7 @@ export default function World({ ballsData }) {
 
     return (
         <>
-            <fogExp2 attach="fog" color="#191920" density={0.02} />
+            {/* <fogExp2 attach="fog" color="#191920" density={0.05} /> */}
             <group position={[0, -10, -zPosition]}>
                 <RigidBody
                     name="floor"
