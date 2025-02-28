@@ -1,7 +1,14 @@
+// #include <fog_pars_fragment>
 varying vec2 vUv;
+varying float vFogDepth;
+
 uniform float uTime;
 uniform vec3 uColorDark;
 uniform vec3 uColorLight;
+
+uniform vec3 fogColor;
+uniform float fogNear;
+uniform float fogFar;
 
 #include ../includes/cnoise.glsl; 
 
@@ -14,4 +21,11 @@ void main() {
 
     vec3 finalColor = mix(uColorLight, uColorDark, strength);
     gl_FragColor = vec4(finalColor, 1.0);
+
+     // Расчет тумана
+    // float fogFactor = smoothstep(fogNear, fogFar, vFogDepth);
+    // vec3 mixedColor = mix(finalColor, fogColor, fogFactor);
+    // gl_FragColor = vec4(mixedColor, 1.0);
+
+    // #include <fog_fragment>
 }

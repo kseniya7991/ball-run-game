@@ -18,6 +18,9 @@ const LavaMaterial = shaderMaterial(
         uTime: 0,
         uColorDark: new THREE.Color("#ff6600"),
         uColorLight: new THREE.Color("#f2f217"),
+        // fogColor: new THREE.Color("#565666"),
+        // fogNear: 5,
+        // fogFar: 20,
     },
     vertexShader,
     fragmentShader
@@ -35,8 +38,7 @@ export function BlockLava({
     const fail = useGame((state) => state.fail);
     const lavaSize = 2;
     const floorSize = (4 - lavaSize) / 2;
-    const marginFloor = floorSize / 2 + lavaSize / 2;   
-
+    const marginFloor = floorSize / 2 + lavaSize / 2;
 
     useEffect(() => {
         lavaMaterial.current.uTime += Math.random() * 10;
@@ -54,7 +56,7 @@ export function BlockLava({
     return (
         <group position={position}>
             <Floor position={[0, -0.1, marginFloor]} scale={[4, 0.2, floorSize]} />
-            <Floor position={[0, -0.1, - marginFloor]} scale={[4, 0.2, floorSize]} />
+            <Floor position={[0, -0.1, -marginFloor]} scale={[4, 0.2, floorSize]} />
             <RigidBody type="kinematicPosition" position={[0, 0, 0]} restitution={0.2} friction={0}>
                 <CuboidCollider
                     args={[2, 0.05, lavaSize / 2]}
