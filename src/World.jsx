@@ -1,11 +1,12 @@
 import { RigidBody, BallCollider } from "@react-three/rapier";
 import { Instance, Instances } from "@react-three/drei";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import * as THREE from "three";
 import useGame from "./stores/useGame";
 import { useLoader } from "@react-three/fiber";
 
 const wall = new THREE.BoxGeometry(0.2, 2, 4);
+const planeShadow = new THREE.PlaneGeometry(0.9, 0.6);
 
 export default function World({ ballsData }) {
     const itemsRef = useRef([]);
@@ -14,19 +15,25 @@ export default function World({ ballsData }) {
     const instances = useRef();
     const bgColor = useGame((state) => (state.theme === "dark" ? "#20273b" : "#008db0"));
 
-    const bakedShadow = useLoader(THREE.TextureLoader, "./textures/simpleShadow.jpg");
+    const bakedShadow = useMemo(() =>
+        useLoader(THREE.TextureLoader, "./textures/simpleShadow.jpg")
+    );
 
-    const planeShadow = new THREE.PlaneGeometry(0.9, 0.6);
-    const planeShadowMaterial = new THREE.MeshBasicMaterial({
-        color: 0x000000,
-        transparent: true,
-        alphaMap: bakedShadow,
-    });
+    const planeShadowMaterial = useMemo(
+        () =>
+            new THREE.MeshBasicMaterial({
+                color: 0x000000,
+                transparent: true,
+                alphaMap: bakedShadow,
+            })
+    );
 
-    const wallMaterial = new THREE.MeshStandardMaterial({
-        color: bgColor,
-    });
-    
+    const wallMaterial = useMemo(
+        () =>
+            new THREE.MeshStandardMaterial({
+                color: bgColor,
+            })
+    );
 
     useEffect(() => {
         setTimeout(() => {
@@ -72,11 +79,7 @@ export default function World({ ballsData }) {
                             position={[-2, 1, 0]}
                             material={wallMaterial}
                             geometry={wall}></mesh>
-                        <mesh
-                            castShadow
-                            position={[2, 1, 0]}
-                            material={wallMaterial}
-                            geometry={wall}></mesh>
+                        <mesh position={[2, 1, 0]} material={wallMaterial} geometry={wall}></mesh>
                         <mesh
                             castShadow
                             position={[0, 1, -1.9]}
@@ -85,45 +88,37 @@ export default function World({ ballsData }) {
                             material={wallMaterial}
                             geometry={wall}></mesh>
                         <mesh
-                            castShadow
                             position={[0, 1, 1.9]}
                             rotation={[0, Math.PI / 2, 0]}
                             scale-z={0.95}
                             material={wallMaterial}
                             geometry={wall}></mesh>
                         <mesh
-                            castShadow
                             position={[0, 0.1, 0]}
                             rotation={[0, 0, Math.PI / 2]}
                             scale={[0.5, 1.9, 0.9]}
                             material={wallMaterial}
                             geometry={wall}></mesh>
                     </RigidBody>
+
                     <Instances limit={1000} range={1000} ref={instances}>
-                        <icosahedronGeometry args={[0.3, 2]} />
+                        <icosahedronGeometry args={[0.3, 1]} />
                         <meshStandardMaterial flatShading />
                         {ballsData.map(({ key, position, color }) => (
-                            <group key={key}>
-                                <RigidBody
-                                    position-z={-zPosition}
-                                    friction={1}
-                                    linearDamping={1}
-                                    angularDamping={1}
-                                    ref={(el) => (itemsRef.current[key] = el)}>
-                                    <BallCollider
-                                        args={[0.3]}
-                                        position={position}
-                                        name={"ball" + key}
-                                    />
-                                    <Instance
-                                        color={color}
-                                        castShadow={true}
-                                        position={position}
-                                        rotation={[0, 0, 0]}
-                                        onClick={(e) => console.log(e)}
-                                    />
-                                </RigidBody>
-                            </group>
+                            <RigidBody
+                                key={key}
+                                position-z={-zPosition}
+                                friction={1}
+                                linearDamping={1}
+                                angularDamping={1}
+                                ref={(el) => (itemsRef.current[key] = el)}>
+                                <BallCollider
+                                    args={[0.3]}
+                                    position={position}
+                                    name={"ball" + key}
+                                />
+                                <Instance color={color} position={position} rotation={[0, 0, 0]} />
+                            </RigidBody>
                         ))}
                     </Instances>
 

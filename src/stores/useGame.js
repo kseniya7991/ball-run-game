@@ -8,12 +8,12 @@ const initialConfig = {
         finalLength: 0,
         finalBlocks: [],
     },
-    // 2: {
-    //     blocks: 8,
-    //     types: ["BlockSpinner", "BlockLimbo", "BlockAxe"],
-    //     finalLength: 0,
-    //     finalBlocks: [],
-    // },
+    2: {
+        blocks: 8,
+        types: ["BlockSpinner", "BlockLimbo", "BlockAxe"],
+        finalLength: 0,
+        finalBlocks: [],
+    },
     // 3: {
     //     blocks: 10,
     //     types: ["BlockSpinner", "BlockLimbo", "BlockAxe", "BlockNarrow", "BlockLava"],
