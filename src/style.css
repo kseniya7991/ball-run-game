@@ -113,3 +113,47 @@ body,
 .interface__controls .key.active {
     background: #ffffff99;
 }
+
+/* HTML: <div class="loader"></div> */
+
+.loading {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    transition: opacity 0.5s ease;
+    pointer-events: all;
+    opacity: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading.loaded {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loading__text {
+    width: fit-content;
+    font-weight: bold;
+    font-family: monospace;
+    font-size: 30px;
+    background: radial-gradient(circle closest-side, #fff 94%, #fff0) right/calc(200% - 1em) 100%;
+    animation: loading 1s infinite alternate linear;
+}
+.loading__text::before {
+    content: "Loading...";
+    line-height: 1em;
+    color: #0000;
+    background: inherit;
+    background-image: radial-gradient(circle closest-side, #000 94%, #fff);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+@keyframes loading {
+    100% {
+        background-position: left;
+    }
+}

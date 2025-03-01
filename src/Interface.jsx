@@ -1,5 +1,5 @@
 import { useKeyboardControls } from "@react-three/drei";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import useGame from "./stores/useGame";
 import { addEffect } from "@react-three/fiber";
 import Lives from "./Lives";
@@ -16,6 +16,8 @@ export default function Interface() {
     const phase = useGame((state) => state.phase);
 
     const nextLevel = useGame((state) => state.nextLevel);
+
+    const [isLoaded, setIsLoaded] = useState(false);
 
     const goToTheNextLevel = () => {
         restart();
@@ -39,18 +41,19 @@ export default function Interface() {
             if (time.current) time.current.textContent = elapsedTime;
         });
 
+        let timer = setTimeout(() => {
+            setIsLoaded(true);
+        }, 3000)
+
         return () => {
             unsubscribeEffect();
+            clearTimeout(timer);
         };
     }, []);
 
     return (
         <>
             <div className="interface">
-                {/* Time */}
-                {/* <div ref={time} className="interface__time">
-                    0.00
-                </div> */}
 
                 {/* Lives */}
                 <div className="interface__lives">
@@ -60,7 +63,7 @@ export default function Interface() {
                 {/* Restart */}
                 {(phase === "ended" || phase === "failed") && (
                     <div className="interface__restart" onClick={goToTheNextLevel}>
-                       {phase === "failed" ? "Retry" : "Next"}
+                        {phase === "failed" ? "Retry" : "Next"}
                     </div>
                 )}
 
@@ -78,6 +81,9 @@ export default function Interface() {
                         <div className={`key large ${jump ? "active" : ""}`}></div>
                     </div>
                 </div>
+            </div>
+            <div className={`loading + ${isLoaded ? " loaded" : ""}`}>
+                <div className={"loading__text"}></div>
             </div>
         </>
     );
