@@ -2,9 +2,9 @@ import { OrbitControls } from "@react-three/drei";
 import Lights from "./Lights.jsx";
 import { Level } from "./Level/Level.jsx";
 import { Physics } from "@react-three/rapier";
-import Player from "./Player";
+import Player from "./Player.jsx";
 import useGame from "./stores/useGame";
-import World from "./World";
+import FinishScene from "./FinishScene.jsx";
 import { useMemo, useEffect, useState, useCallback } from "react";
 import React from "react";
 import { Perf } from "r3f-perf";
@@ -16,6 +16,7 @@ import { BlockSpinner } from "./Level/BLockSpinner";
 import { BlockLava } from "./Level/BlockLava";
 import { BlockNarrow } from "./Level/BlockNarrow";
 import { BlockSeesaw } from "./Level/BlockSeesaw";
+
 
 export const blockFunctions = {
     BlockSpinner: {
@@ -159,7 +160,7 @@ export default function Experience() {
                     </>
                 )}
 
-                {isConfigReady && <World ballsData={ballsData} />}
+                {isConfigReady && <FinishScene ballsData={ballsData} />}
 
                 <Player />
             </Physics>
