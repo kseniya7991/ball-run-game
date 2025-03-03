@@ -11,6 +11,8 @@ export default function Interface() {
     const rightward = useKeyboardControls((state) => state.rightward);
     const leftward = useKeyboardControls((state) => state.leftward);
     const jump = useKeyboardControls((state) => state.jump);
+    const soundEnabled = useGame((state) => state.soundEnabled);
+    const toggleSound = useGame((state) => state.toggleSound);
 
     const restart = useGame((state) => state.restart);
     const phase = useGame((state) => state.phase);
@@ -25,6 +27,7 @@ export default function Interface() {
     };
 
     useEffect(() => {
+
         const unsubscribeEffect = addEffect(() => {
             const state = useGame.getState();
 
@@ -43,7 +46,7 @@ export default function Interface() {
 
         let timer = setTimeout(() => {
             setIsLoaded(true);
-        }, 3000)
+        }, 0);
 
         return () => {
             unsubscribeEffect();
@@ -51,10 +54,12 @@ export default function Interface() {
         };
     }, []);
 
+
+        
+
     return (
         <>
             <div className="interface">
-
                 {/* Lives */}
                 <div className="interface__lives">
                     <Lives />
@@ -85,6 +90,7 @@ export default function Interface() {
             <div className={`loading + ${isLoaded ? " loaded" : ""}`}>
                 <div className={"loading__text"}></div>
             </div>
+            <div className={`sound ${soundEnabled ? "active" : ""} `} onClick={toggleSound}></div>
         </>
     );
 }
