@@ -26,7 +26,7 @@ export default function Experience() {
     const bgColor = useGame((state) => (state.theme === "dark" ? "#191920" : "#afe0dd"));
 
     const config = useMemo(() => useGame.getState().config, []);
-    const ballsCount = useMemo(50);
+    const ballsCount = useMemo(() => 50, []);
 
     useControls({
         theme: {
