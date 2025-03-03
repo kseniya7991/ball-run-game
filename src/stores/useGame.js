@@ -1,6 +1,40 @@
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 
+import { BlockLimbo } from "../Level/BlockLimbo";
+import { BlockAxe } from "../Level/BlockAxe";
+import { BlockSpinner } from "../Level/BLockSpinner";
+import { BlockLava } from "../Level/BlockLava";
+import { BlockNarrow } from "../Level/BlockNarrow";
+import { BlockSeesaw } from "../Level/BlockSeesaw";
+
+export const blockFunctions = {
+    BlockSpinner: {
+        component: BlockSpinner,
+        length: 4,
+    },
+    BlockLimbo: {
+        component: BlockLimbo,
+        length: 4,
+    },
+    BlockAxe: {
+        component: BlockAxe,
+        length: 4,
+    },
+    BlockLava: {
+        component: BlockLava,
+        length: 4,
+    },
+    BlockNarrow: {
+        component: BlockNarrow,
+        length: 4,
+    },
+    BlockSeesaw: {
+        component: BlockSeesaw,
+        length: 8,
+    },
+};
+
 const initialConfig = {
     1: {
         blocks: 1,
@@ -51,16 +85,31 @@ const initialConfig = {
     // },
 };
 
+const calcNewConfig = () => {
+    const newConfig = { ...initialConfig };
+    Object.entries(newConfig).forEach(([key, configKey]) => {
+        const { blocks, types } = configKey;
+        if (!blocks || !types?.length) return;
+        Array.from({ length: blocks }, () => {
+            const block = blockFunctions[types[Math.floor(Math.random() * types.length)]];
+            newConfig[key].finalLength += block.length;
+            newConfig[key].finalBlocks.push(block.component);
+        });
+    });
+    return newConfig;
+};
+
 export default create(
     subscribeWithSelector((set) => {
         return {
             // Sound
             soundEnabled: localStorage.getItem("soundEnabled") === "true",
-            toggleSound: () => set((state) => {
-                const nextValue = !state.soundEnabled;
-                localStorage.setItem("soundEnabled", nextValue);
-                return { soundEnabled: nextValue };
-            }),
+            toggleSound: () =>
+                set((state) => {
+                    const nextValue = !state.soundEnabled;
+                    localStorage.setItem("soundEnabled", nextValue);
+                    return { soundEnabled: nextValue };
+                }),
 
             // Theme
             theme: "dark",
@@ -175,12 +224,7 @@ export default create(
                 }),
 
             // Config
-            config: initialConfig,
-            isConfigReady: false,
-            updateConfig: (newConfig) =>
-                set((state) => {
-                    return { config: newConfig, isConfigReady: true };
-                }),
+            config: calcNewConfig(),
         };
     })
 );

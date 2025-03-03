@@ -1,104 +1,52 @@
 import { OrbitControls } from "@react-three/drei";
-import Lights from "./Lights.jsx";
-import { Level } from "./Level/Level.jsx";
 import { Physics } from "@react-three/rapier";
-import Player from "./Player.jsx";
-import useGame from "./stores/useGame";
-import FinishScene from "./FinishScene.jsx";
-import { useMemo, useEffect, useState, useCallback } from "react";
-import React from "react";
 import { Perf } from "r3f-perf";
+import { useMemo, useEffect, useState, useCallback } from "react";
 import { useControls } from "leva";
 
-import { BlockLimbo } from "./Level/BlockLimbo";
-import { BlockAxe } from "./Level/BlockAxe";
-import { BlockSpinner } from "./Level/BLockSpinner";
-import { BlockLava } from "./Level/BlockLava";
-import { BlockNarrow } from "./Level/BlockNarrow";
-import { BlockSeesaw } from "./Level/BlockSeesaw";
+import useGame from "./stores/useGame";
 
-
-export const blockFunctions = {
-    BlockSpinner: {
-        component: BlockSpinner,
-        length: 4,
-    },
-    BlockLimbo: {
-        component: BlockLimbo,
-        length: 4,
-    },
-    BlockAxe: {
-        component: BlockAxe,
-        length: 4,
-    },
-    BlockLava: {
-        component: BlockLava,
-        length: 4,
-    },
-    BlockNarrow: {
-        component: BlockNarrow,
-        length: 4,
-    },
-    BlockSeesaw: {
-        component: BlockSeesaw,
-        length: 8,
-    },
-};
+import Lights from "./Lights.jsx";
+import { Level } from "./Level/Level.jsx";
+import Player from "./Player.jsx";
+import FinishScene from "./FinishScene.jsx";
 
 export default function Experience() {
     const [phase, setPhase] = useState(null);
+    const [isConfigReady, setIsConfigReady] = useState(false);
 
     const blocksCount = useGame((state) => state.blocksCount);
     const blocksSeed = useGame((state) => state.blocksSeed);
-
-    const config = useGame((state) => state.config);
-    const updateConfig = useGame((state) => state.updateConfig);
-    const isConfigReady = useGame((state) => state.isConfigReady);
 
     const setLevels = useGame((state) => state.setLevels);
     const updateFinalLevelLength = useGame((state) => state.updateFinalLevelLength);
 
     const currentTheme = useGame((state) => state.theme);
-    const bgColor = useGame((state) => (state.theme === "dark" ? "#191920" : "#afe0dd"));
     const toggleTheme = useGame((state) => state.toggleTheme);
+    const bgColor = useGame((state) => (state.theme === "dark" ? "#191920" : "#afe0dd"));
 
-    const theme = useControls({
+    const config = useMemo(() => useGame.getState().config, []);
+    const ballsCount = useMemo(50);
+
+    useControls({
         theme: {
             value: currentTheme,
             options: ["dark", "light"],
-            onChange: (val) => {
-                toggleTheme(val);
-            },
+            onChange: (val) => toggleTheme(val),
         },
     });
 
-
     useEffect(() => {
-        const newConfig = { ...config };
-        const length = Object.keys(newConfig).length;
-
-        Object.entries(newConfig).forEach(([key, configKey]) => {
-            const { blocks, types } = configKey;
-            if (!blocks || !types?.length) return;
-            Array.from({ length: blocks }, () => {
-                const block = blockFunctions[types[Math.floor(Math.random() * types.length)]];
-                newConfig[key].finalLength += block.length;
-                newConfig[key].finalBlocks.push(block.component);
-            });
-        });
-        updateConfig(newConfig);
+        const length = Object.keys(config).length;
         updateFinalLevelLength(useGame.getState().config[length]?.finalLength);
         setLevels(length);
-
-        return () => {
-            updateConfig(config);
-        };
+        setIsConfigReady(true);
     }, []);
 
     const ballsData = useMemo(() => {
         const data = [];
 
-        for (let ball = 0; ball < 50; ball++) {
+        for (let ball = 0; ball < ballsCount; ball++) {
             const position = [
                 Math.random() * 3.5 - 1.75,
                 1 + ball * 0.1,
@@ -115,16 +63,7 @@ export default function Experience() {
     }, []);
 
     const handlePhaseChange = useCallback(
-        (value) => {
-            if (value === "finished") {
-                setTimeout(() => {
-                    setPhase(value);
-                }, 3000);
-            }
-            // if (value === "ready" && phase === "finished") {
-            //     setPhase(value);
-            // }
-        },
+        (value) => value === "finished" && setTimeout(() => setPhase(value), 3000),
         [phase]
     );
 
@@ -136,15 +75,10 @@ export default function Experience() {
         };
     }, [handlePhaseChange]);
 
-    /**
-     * TODO 1. Сделать темную/светлую тему:
-     * TODO переключать пол, фон, туман, цвет бокса
-     */
-
     return (
         <>
             <Perf position="top-left" />
-            <OrbitControls makeDefault />
+            {/* <OrbitControls makeDefault /> */}
 
             <color args={[bgColor]} attach="background" />
 
