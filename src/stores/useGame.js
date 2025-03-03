@@ -10,7 +10,7 @@ const initialConfig = {
     },
     2: {
         blocks: 8,
-        types: ["BlockSpinner", "BlockLimbo", "BlockAxe"],
+        types: ["BlockSpinner", "BlockLimbo", "BlockAxe", "BlockLava"],
         finalLength: 0,
         finalBlocks: [],
     },
@@ -54,10 +54,18 @@ const initialConfig = {
 export default create(
     subscribeWithSelector((set) => {
         return {
+            // Sound
+            soundEnabled: localStorage.getItem("soundEnabled") === "true",
+            toggleSound: () => set((state) => {
+                const nextValue = !state.soundEnabled;
+                localStorage.setItem("soundEnabled", nextValue);
+                return { soundEnabled: nextValue };
+            }),
+
             // Theme
             theme: "dark",
             toggleTheme: (val) => set({ theme: val }),
-    
+
             blocksSeed: 0,
 
             // Blocks count
@@ -132,7 +140,7 @@ export default create(
             startTime: 0,
             endTime: 0,
 
-           // Phases
+            // Phases
             phase: "ready",
             start: () =>
                 set((state) =>
@@ -166,7 +174,7 @@ export default create(
                     return state.phase !== "finished" ? { phase: "finished" } : {};
                 }),
 
-           // Config
+            // Config
             config: initialConfig,
             isConfigReady: false,
             updateConfig: (newConfig) =>
