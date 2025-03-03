@@ -73,7 +73,7 @@ export default function FinishScene({ ballsData }) {
                 </RigidBody>
 
                 <group>
-                    <RigidBody name="box" type="fixed" friction={0.2} position-z={-zPosition}>
+                    <RigidBody name="obstacle" type="fixed" friction={0.2} position-z={-zPosition}>
                         <mesh
                             castShadow
                             position={[-2, 1, 0]}
@@ -106,6 +106,7 @@ export default function FinishScene({ ballsData }) {
                         <meshStandardMaterial flatShading />
                         {ballsData.map(({ key, position, color }) => (
                             <RigidBody
+                                name="floor"
                                 key={key}
                                 position-z={-zPosition}
                                 friction={1}
