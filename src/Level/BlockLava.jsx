@@ -57,7 +57,7 @@ export function BlockLava({
         <group position={position}>
             <Floor position={[0, -0.1, marginFloor]} scale={[4, 0.2, floorSize]} />
             <Floor position={[0, -0.1, -marginFloor]} scale={[4, 0.2, floorSize]} />
-            <RigidBody type="kinematicPosition" position={[0, 0, 0]} restitution={0.2} friction={0}>
+            <RigidBody type="fixed" position={[0, 0, 0]} restitution={0.2} friction={0} name="lava">
                 <CuboidCollider
                     args={[2, 0.05, lavaSize / 2]}
                     position={[0, -0.4, 0]}

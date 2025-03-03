@@ -25,6 +25,7 @@ export function BlockSpinner({
         <group position={position}>
             <Floor />
             <RigidBody
+                name="obstacle"
                 ref={obstacle}
                 type="kinematicPosition"
                 position={[0, 0.3, 0]}

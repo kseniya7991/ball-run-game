@@ -5,8 +5,11 @@ import { RigidBody } from "@react-three/rapier";
 import { boxGeometry, levelMaterials } from "./Level";
 import { Floor } from "./Floor";
 
-
-export function BlockAxe({geometry = boxGeometry, material = levelMaterials.obstacle, position = [0, 0, 0] }) {
+export function BlockAxe({
+    geometry = boxGeometry,
+    material = levelMaterials.obstacle,
+    position = [0, 0, 0],
+}) {
     const [randomSpeed] = useState(() => Math.random() + 0.6);
     const [timeOffset] = useState(() => Math.random() * Math.PI * 2);
     const obstacle = useRef();
@@ -25,6 +28,7 @@ export function BlockAxe({geometry = boxGeometry, material = levelMaterials.obst
         <group position={position}>
             <Floor />
             <RigidBody
+                name="obstacle"
                 ref={obstacle}
                 type="kinematicPosition"
                 position={[0, 0.3, 0]}

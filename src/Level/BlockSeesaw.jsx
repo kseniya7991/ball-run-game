@@ -59,6 +59,7 @@ export function BlockSeesaw({
             <RigidBody ref={cone} type="fixed" colliders={"hull"}></RigidBody>
             <RigidBody
                 ref={plank}
+                name="obstacle"
                 colliders={"cuboid"}
                 position-y={0.6}
                 friction={0}
