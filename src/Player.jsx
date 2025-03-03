@@ -6,18 +6,19 @@ import { useKeyboardControls } from "@react-three/drei";
 import { useRef, useEffect, useState, useMemo } from "react";
 import { useControls } from "leva";
 import { LavaSparkles } from "./Level/LavaSparkles";
+import { playHitSound, playHitObstacleSound, playLavaSound, stopAllSounds } from "./sounds";
 
 export default function Player() {
     const body = useRef();
     const [bodyPosition, setBodyPosition] = useState({ x: 0, y: 1, z: 0 });
     const [subscribeKeys, getKeys] = useKeyboardControls();
     const { rapier, world } = useRapier();
-    
+
     const [smoothCameraPosition] = useState(() => new THREE.Vector3(10, 10, 10));
     const [smoothCameraTarget] = useState(() => new THREE.Vector3());
     const [burnedColor] = useState(() => "#272727");
     const [isCollidingWithLimbo, setIsCollidingWithLimbo] = useState(false);
-    
+
     const lastLevel = useGame((state) => state.levels);
     const start = useGame((state) => state.start);
     const restart = useGame((state) => state.restart);
@@ -35,6 +36,10 @@ export default function Player() {
     const { "ball color": ballColor } = useControls({
         "ball color": "#be3737",
     });
+
+    useEffect(() => {
+        if (isBurning) playLavaSound();
+    }, [isBurning]);
 
     /**
      * Jump
@@ -58,6 +63,7 @@ export default function Player() {
         body.current?.setTranslation({ x: 0, y: 1, z: 0 });
         body.current?.setLinvel({ x: 0, y: 0, z: 0 });
         body.current?.setAngvel({ x: 0, y: 0, z: 0 });
+        stopAllSounds();
     };
 
     useEffect(() => {
@@ -148,7 +154,7 @@ export default function Player() {
 
         state.camera.position.copy(smoothCameraPosition);
         state.camera.lookAt(smoothCameraTarget);
-        
+
         /**
          * Phases
          */
@@ -208,9 +214,30 @@ export default function Player() {
         return cameraPosition;
     };
 
-    const handleCollision = (event, reset = false) => {
-        if (event.other.rigidBodyObject.name === "Limbo") setIsCollidingWithLimbo(true);
-        if (reset) setIsCollidingWithLimbo(false);
+    const handleCollisionEnter = (event) => {
+        if(phase === "ready") return;
+        const objName = event.other.rigidBodyObject.name;
+        const velocity = body.current.linvel();
+        const absX = Math.abs(velocity.x);
+        const absY = Math.abs(velocity.y);
+        const absZ = Math.abs(velocity.z);
+
+        if (objName === "Limbo") {
+            setIsCollidingWithLimbo(true);
+            if (absX > 1.5 || absY > 1 || absZ > 1.5) {
+                playHitObstacleSound(Math.max(absX, absY, absZ));
+            }
+        } else if (objName === "obstacle") {
+            if (absX > 1.5 || absY > 1 || absZ > 1.5) {
+                playHitObstacleSound(Math.max(absX, absY, absZ));
+            }
+        } else if (objName !== "lava" && velocity.y < -1) {
+            playHitSound(-velocity.y);
+        }
+    };
+
+    const handleCollisionExit = () => {
+        setIsCollidingWithLimbo(false);
     };
 
     return (
@@ -225,8 +252,8 @@ export default function Player() {
                     linearDamping={0.5}
                     angularDamping={0.5}
                     position={[0, 1, 0]}
-                    onCollisionEnter={handleCollision}
-                    onCollisionExit={(e) => handleCollision(e, true)}>
+                    onCollisionEnter={handleCollisionEnter}
+                    onCollisionExit={handleCollisionExit}>
                     <mesh castShadow>
                         <icosahedronGeometry args={[0.3, 1]} />
                         <meshStandardMaterial
@@ -235,7 +262,6 @@ export default function Player() {
                         />
                     </mesh>
                 </RigidBody>
-
 
                 {isBurning && <LavaSparkles position={bodyPosition} />}
             </group>
