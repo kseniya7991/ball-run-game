@@ -211,10 +211,9 @@ body,
 }
 
 .sound:hover {
-    /* opacity: 0.6; */
     filter: drop-shadow(0 0 5px #6d778d);
 }
 
-.sound:hover::after {
+.sound.active::after {
     width: 0;
 }

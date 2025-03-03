@@ -33,6 +33,8 @@ export default function Player() {
     const fail = useGame((state) => state.fail);
     const finish = useGame((state) => state.finish);
 
+    const soundEnabled = useGame((state) => state.soundEnabled);
+
     const { "ball color": ballColor } = useControls({
         "ball color": "#be3737",
     });
@@ -215,7 +217,7 @@ export default function Player() {
     };
 
     const handleCollisionEnter = (event) => {
-        if(phase === "ready") return;
+        if (phase === "ready" || !soundEnabled) return;
         const objName = event.other.rigidBodyObject.name;
         const velocity = body.current.linvel();
         const absX = Math.abs(velocity.x);
