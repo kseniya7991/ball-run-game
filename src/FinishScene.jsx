@@ -1,6 +1,6 @@
 import { RigidBody, BallCollider } from "@react-three/rapier";
 import { Instance, Instances } from "@react-three/drei";
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import * as THREE from "three";
 import useGame from "./stores/useGame";
 import { useLoader } from "@react-three/fiber";
@@ -8,16 +8,18 @@ import { useLoader } from "@react-three/fiber";
 const wall = new THREE.BoxGeometry(0.2, 2, 4);
 const planeShadow = new THREE.PlaneGeometry(0.9, 0.6);
 
+
 export default function FinishScene({ ballsData }) {
     const itemsRef = useRef([]);
-    const finalLevelLength = useGame.getState().finalLevelLength;
-    const zPosition = (finalLevelLength + 4) / 2;
     const instances = useRef();
+
+    const [outBoxBalls, setOutBoxBalls] = useState(new Map());
+
     const bgColor = useGame((state) => (state.theme === "dark" ? "#20273b" : "#008db0"));
 
-    const bakedShadow = useMemo(() =>
-        useLoader(THREE.TextureLoader, "./textures/simpleShadow.jpg")
-    );
+    const finalLevelLength = useMemo(() => useGame.getState().finalLevelLength, []);
+    const zPosition = useMemo(() => (finalLevelLength + 4) / 2, [finalLevelLength]);
+    const bakedShadow = useLoader(THREE.TextureLoader, "./textures/simpleShadow.jpg");
 
     const planeShadowMaterial = useMemo(
         () =>
@@ -25,34 +27,34 @@ export default function FinishScene({ ballsData }) {
                 color: 0x000000,
                 transparent: true,
                 alphaMap: bakedShadow,
-            })
+            }),
+        [bakedShadow]
     );
-
     const wallMaterial = useMemo(
         () =>
             new THREE.MeshStandardMaterial({
                 color: bgColor,
-            })
+            }),
+        [bgColor]
     );
 
+    const handleBallsSleep = useCallback(() => {
+        itemsRef.current.forEach((item) => {
+            item.setBodyType(1);
+            item.sleep();
+        });
+    },[itemsRef])
+
     useEffect(() => {
-        setTimeout(() => {
-            itemsRef.current.forEach((item) => {
-                item.setBodyType(1);
-                item.sleep();
-            });
-        }, 5000);
-    }, []);
+        const timeout = setTimeout(handleBallsSleep, 5000);
+        return () => clearTimeout(timeout);
+    }, [handleBallsSleep]);
 
-    const [outBoxBalls, setOutBoxBalls] = useState(new Map());
-
-    const handleCollisionEnter = (e) => {
+    const handleCollisionEnter = useCallback((e) => {
         if (e.colliderObject.name.includes("ball")) {
-            const newOutBoxBalls = new Map(outBoxBalls);
-            newOutBoxBalls.set(e.colliderObject.name, e.colliderObject);
-            setOutBoxBalls(newOutBoxBalls);
+            setOutBoxBalls((prev) => new Map(prev).set(e.colliderObject.name, e.colliderObject));
         }
-    };
+    },[])
 
     return (
         <>
@@ -64,11 +66,11 @@ export default function FinishScene({ ballsData }) {
                     friction={0.5}
                     restitution={0.2}
                     onCollisionEnter={handleCollisionEnter}
-                    position-z={-zPosition}>
+                    position-z={-zPosition}
+                    >
                     <mesh position={[0, 0, 0]} receiveShadow>
                         <boxGeometry args={[2000, 0.1, 2000]} />
                         <meshStandardMaterial color={bgColor} />
-                        {/* <meshStandardMaterial color="#fff" /> */}
                     </mesh>
                 </RigidBody>
 

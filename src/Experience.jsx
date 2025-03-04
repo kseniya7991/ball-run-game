@@ -26,7 +26,7 @@ export default function Experience() {
     const bgColor = useGame((state) => (state.theme === "dark" ? "#191920" : "#afe0dd"));
 
     const config = useMemo(() => useGame.getState().config, []);
-    const ballsCount = useMemo(() => 50, []);
+    const ballsCount = useMemo(() => 150, []);
 
     useControls({
         theme: {
@@ -35,13 +35,6 @@ export default function Experience() {
             onChange: (val) => toggleTheme(val),
         },
     });
-
-    useEffect(() => {
-        const length = Object.keys(config).length;
-        updateFinalLevelLength(useGame.getState().config[length]?.finalLength);
-        setLevels(length);
-        setIsConfigReady(true);
-    }, []);
 
     const ballsData = useMemo(() => {
         const data = [];
@@ -67,9 +60,16 @@ export default function Experience() {
         [phase]
     );
 
+
+    useEffect(() => {
+        const length = Object.keys(config).length;
+        updateFinalLevelLength(useGame.getState().config[length]?.finalLength);
+        setLevels(length);
+        setIsConfigReady(true);
+    }, []);
+
     useEffect(() => {
         const unsubscribePhase = useGame.subscribe((state) => state.phase, handlePhaseChange);
-
         return () => {
             unsubscribePhase();
         };
@@ -96,7 +96,7 @@ export default function Experience() {
 
                 {isConfigReady && <FinishScene ballsData={ballsData} />}
 
-                <Player />
+              <Player />
             </Physics>
         </>
     );
