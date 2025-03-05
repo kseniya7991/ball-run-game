@@ -8,7 +8,6 @@ import { useLoader } from "@react-three/fiber";
 const wall = new THREE.BoxGeometry(0.2, 2, 4);
 const planeShadow = new THREE.PlaneGeometry(0.9, 0.6);
 
-
 export default function FinishScene({ ballsData }) {
     const itemsRef = useRef([]);
     const instances = useRef();
@@ -43,7 +42,7 @@ export default function FinishScene({ ballsData }) {
             item.setBodyType(1);
             item.sleep();
         });
-    },[itemsRef])
+    }, [itemsRef]);
 
     useEffect(() => {
         const timeout = setTimeout(handleBallsSleep, 5000);
@@ -54,7 +53,7 @@ export default function FinishScene({ ballsData }) {
         if (e.colliderObject.name.includes("ball")) {
             setOutBoxBalls((prev) => new Map(prev).set(e.colliderObject.name, e.colliderObject));
         }
-    },[])
+    }, []);
 
     return (
         <>
@@ -66,8 +65,7 @@ export default function FinishScene({ ballsData }) {
                     friction={0.5}
                     restitution={0.2}
                     onCollisionEnter={handleCollisionEnter}
-                    position-z={-zPosition}
-                    >
+                    position-z={-zPosition}>
                     <mesh position={[0, 0, 0]} receiveShadow>
                         <boxGeometry args={[2000, 0.1, 2000]} />
                         <meshStandardMaterial color={bgColor} />
@@ -114,6 +112,7 @@ export default function FinishScene({ ballsData }) {
                                 friction={1}
                                 linearDamping={1}
                                 angularDamping={1}
+                                userData={{ type: "ball" }}
                                 ref={(el) => (itemsRef.current[key] = el)}>
                                 <BallCollider
                                     args={[0.3]}

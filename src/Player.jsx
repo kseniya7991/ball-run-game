@@ -49,12 +49,14 @@ export default function Player() {
     const jump = () => {
         const origin = body.current.translation();
         origin.y -= 0.31;
-        const direction = { x: 0, y: -5, z: 0 };
+        const direction = { x: 0, y: -1, z: 0 };
 
         const ray = new rapier.Ray(origin, direction);
         const hit = world.castRay(ray, 10, true);
+        const type = hit?.collider.parent().userData?.type;
 
-        if (hit?.timeOfImpact < 0.15) body.current?.applyImpulse({ x: 0, y: 0.5, z: 0 });
+        if (hit?.timeOfImpact < 0.15 || (type === "ball" && hit?.timeOfImpact < 0.5))
+            body.current?.applyImpulse({ x: 0, y: 0.5, z: 0 });
     };
 
     /**
@@ -160,7 +162,7 @@ export default function Player() {
         /**
          * Phases
          */
-        if (bodyPosition.z < -(levelLength + 2 + 0.4) && bodyPosition.y > 0) {
+        if (bodyPosition.z < -(levelLength + 2 + 0.4) && bodyPosition.y > 0 && !isBurning) {
             if (useGame.getState().currentLevel === lastLevel) {
                 finish();
             } else {
