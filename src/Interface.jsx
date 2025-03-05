@@ -4,15 +4,13 @@ import { useEffect, useState } from "react";
 import useGame from "./stores/useGame";
 import Lives from "./Lives";
 
-
 export default function Interface() {
     const forward = useKeyboardControls((state) => state.forward);
     const backward = useKeyboardControls((state) => state.backward);
     const rightward = useKeyboardControls((state) => state.rightward);
     const leftward = useKeyboardControls((state) => state.leftward);
     const jump = useKeyboardControls((state) => state.jump);
-
-    // const { forward, backward, rightward, leftward, jump } = useKeyboardState();
+    const goNext = useKeyboardControls((state) => state.goNext);
 
     const soundEnabled = useGame((state) => state.soundEnabled);
     const toggleSound = useGame((state) => state.toggleSound);
@@ -25,8 +23,12 @@ export default function Interface() {
 
     const goToTheNextLevel = () => {
         restart();
-        if (phase == "ended") nextLevel();
+        if (phase === "ended") nextLevel();
     };
+
+    useEffect(() => {
+        if (goNext && phase === "ended") goToTheNextLevel();
+    }, [goNext]);
 
     useEffect(() => {
         const timer = setTimeout(() => {
