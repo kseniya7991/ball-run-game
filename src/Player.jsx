@@ -32,8 +32,15 @@ export default function Player() {
 
     const fail = useGame((state) => state.fail);
     const finish = useGame((state) => state.finish);
+    const updateLivesOnFail = useGame((state) => state.updateLivesOnFail);
+    const isLastTry = useGame((state) => state.isLastTry);
+    const updateLevelOnFail = useGame((state) => state.updateLevelOnFail)
 
     const soundEnabled = useGame((state) => state.soundEnabled);
+
+    const maxLives = useMemo(() => useGame.getState().maxLives, []);
+    const currentLives = useGame((state) => state.lives);
+
 
     const { "ball color": ballColor } = useControls({
         "ball color": "#be3737",
@@ -173,8 +180,11 @@ export default function Player() {
         if (bodyPosition.y < -4 && phase !== "finished") {
             fail();
             restart();
-        }
 
+            updateLivesOnFail();
+            updateLevelOnFail();
+        }
+   
         // Fixes moments when limbo obstacle presses ball
         if (
             bodyPosition.y < 0 &&

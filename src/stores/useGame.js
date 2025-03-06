@@ -38,13 +38,13 @@ export const blockFunctions = {
 const initialConfig = {
     1: {
         blocks: 1,
-        types: ["BlockAxe"],
+        types: ["BlockLava"],
         finalLength: 0,
         finalBlocks: [],
     },
     2: {
         blocks: 8,
-        types: ["BlockSpinner", "BlockLimbo", "BlockAxe", "BlockLava"],
+        types: ["BlockLava"],
         finalLength: 0,
         finalBlocks: [],
     },
@@ -134,23 +134,14 @@ export default create(
 
             // Burning
             isBurning: false,
-            startBurning: () =>
-                set((state) => {
-                    return { isBurning: true };
-                }),
-            endBurning: () =>
-                set((state) => {
-                    return { isBurning: false };
-                }),
+            startBurning: (val) => set({ isBurning: true }),
+            endBurning: (val) => set({ isBurning: false }),
 
             // Levels
             currentLevel: 1,
             levels: 0,
 
-            setLevels: (val) =>
-                set((state) => {
-                    return { levels: val };
-                }),
+            setLevels: (val) => set({ levels: val }),
 
             nextLevel: () =>
                 set((state) => {
@@ -164,63 +155,38 @@ export default create(
                         : {};
                 }),
 
-            resetLevels: () =>
-                set((state) => {
-                    return { currentLevel: 1 };
-                }),
-
             // Lives
             lives: 3,
             maxLives: 3,
 
-            resetLives: () =>
-                set((state) => {
-                    return { lives: state.maxLives };
-                }),
-
-            increaseLives: () =>
-                set((state) => {
-                    return {
-                        lives: state.lives + 1 <= state.maxLives ? state.lives + 1 : state.maxLives,
-                    };
-                }),
-
-            // Time
-            startTime: 0,
-            endTime: 0,
-
             // Phases
             phase: "ready",
-            start: () =>
-                set((state) =>
-                    state.phase === "ready" ? { phase: "playing", startTime: Date.now() } : {}
-                ),
+            isLastTry: false,
+
+            start: () => set((state) => (state.phase === "ready" ? { phase: "playing" } : {})),
             restart: () =>
                 set((state) =>
                     state.phase !== "ready" ? { phase: "ready", blocksSeed: Math.random() } : {}
                 ),
-            end: () =>
-                set((state) =>
-                    state.phase === "playing" ? { phase: "ended", endTime: Date.now() } : {}
-                ),
+            end: () => set((state) => (state.phase === "playing" ? { phase: "ended" } : {})),
+            fail: () => set((state) => (state.phase === "playing" ? { phase: "failed" } : {})),
+            finish: () => set((state) => (state.phase !== "finished" ? { phase: "finished" } : {})),
 
-            fail: () =>
+            updateLivesOnFail: () =>
                 set((state) => {
                     const nextLives = state.lives - 1 < 0 ? state.maxLives : state.lives - 1;
-                    const nextLevel = state.lives - 1 < 0 ? 1 : state.currentLevel;
-                    return state.phase === "playing"
-                        ? {
-                              phase: "failed",
-                              endTime: Date.now(),
-                              lives: nextLives,
-                              currentLevel: nextLevel,
-                          }
-                        : {};
+                    const isLastTry = nextLives === 0;
+                    return isLastTry
+                        ? { lives: nextLives, isLastTry: true }
+                        : { lives: nextLives, isLastTry: false };
                 }),
 
-            finish: () =>
+            updateLevelOnFail: () =>
                 set((state) => {
-                    return state.phase !== "finished" ? { phase: "finished" } : {};
+                    const nextLevel = state.isLastTry ? 1 : state.currentLevel;
+                    const nextLives =
+                        nextLevel === 1 && state.isLastTry ? state.maxLives : state.lives;
+                    return { currentLevel: nextLevel, lives: nextLives };
                 }),
 
             // Config

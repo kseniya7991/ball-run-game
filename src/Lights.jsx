@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import useGame from "./stores/useGame";
 
@@ -8,26 +8,33 @@ export default function Lights({ isFinish = false }) {
     const targetRef = useRef();
     const finalLevelLength = useGame((state) => state.finalLevelLength);
 
-    useFrame((state) => {
+    const updateLightPosition = (light, camera) => {
         // Update Z
-        light.current.position.z = state.camera.position.z + 1 - 4;
-        light.current.target.position.z = state.camera.position.z - 4;
+        light.position.z = camera.position.z + 1 - 4;
+        light.target.position.z = camera.position.z - 4;
         // Update X
-        light.current.position.x = state.camera.position.x + 6;
-        light.current.target.position.x = state.camera.position.x + 4;
-        light.current.target.updateMatrixWorld();
+        light.position.x = camera.position.x + 6;
+        light.target.position.x = camera.position.x + 4;
+        light.target.updateMatrixWorld();
+    };
+
+    const updateFinishLight = ()=>{
+        light.current.shadow.camera.far = 100;
+        light.current.intensity = 3;
+        light.current.shadow.camera.updateProjectionMatrix();
+        light.current.shadow.map.needsUpdate = true;
+        spotLight.current.target = targetRef.current;
+    }
+
+    useFrame((state) => {
+        updateLightPosition(light.current, state.camera);
     });
 
     useEffect(() => {
-        if (isFinish) {
-            light.current.shadow.camera.far = 100;
-            light.current.intensity = 3;
-            light.current.shadow.camera.updateProjectionMatrix();
-            light.current.shadow.map.needsUpdate = true;
-
-            spotLight.current.target = targetRef.current;
-        }
+        if (isFinish) updateFinishLight();
     }, [isFinish]);
+
+    const spotLightPosition = useMemo(()=> [4.48, -10 + 12, -finalLevelLength - 4],[finalLevelLength])
 
     return (
         <>
@@ -46,7 +53,7 @@ export default function Lights({ isFinish = false }) {
             />
 
             {isFinish && (
-                <group position={[4.48, -10 + 12, -finalLevelLength - 4]}>
+                <group position={spotLightPosition}>
                     <spotLight
                         ref={spotLight}
                         position={[0, 0, 0]}

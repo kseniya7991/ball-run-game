@@ -18,16 +18,18 @@ export default function Interface() {
     const restart = useGame((state) => state.restart);
     const phase = useGame((state) => state.phase);
     const nextLevel = useGame((state) => state.nextLevel);
+    const updateLevelOnFail = useGame((state) => state.updateLevelOnFail);
 
     const [isLoaded, setIsLoaded] = useState(false);
 
     const goToTheNextLevel = () => {
         restart();
         if (phase === "ended") nextLevel();
+        if (phase === "failed") updateLevelOnFail();
     };
 
     useEffect(() => {
-        if (goNext && phase === "ended") goToTheNextLevel();
+        if(goNext) goToTheNextLevel();;
     }, [goNext]);
 
     useEffect(() => {
@@ -58,22 +60,22 @@ export default function Interface() {
                 {/* Controls */}
                 <div className="interface__controls">
                     <div className="raw">
-                        <div className={`key ${forward ? "active" : ""}`}></div>
+                        <div className={`key ${forward && "active"}`}></div>
                     </div>
                     <div className="raw">
-                        <div className={`key ${leftward ? "active" : ""}`}></div>
-                        <div className={`key ${backward ? "active" : ""}`}></div>
-                        <div className={`key ${rightward ? "active" : ""}`}></div>
+                        <div className={`key ${leftward && "active"}`}></div>
+                        <div className={`key ${backward && "active"}`}></div>
+                        <div className={`key ${rightward && "active"}`}></div>
                     </div>
                     <div className="raw">
-                        <div className={`key large ${jump ? "active" : ""}`}></div>
+                        <div className={`key large ${jump && "active"}`}></div>
                     </div>
                 </div>
             </div>
-            <div className={`loading + ${isLoaded ? " loaded" : ""}`}>
+            <div className={`loading + ${isLoaded && " loaded"}`}>
                 <div className={"loading__text"}></div>
             </div>
-            <div className={`sound ${soundEnabled ? "active" : ""} `} onClick={toggleSound}></div>
+            <div className={`sound ${soundEnabled && "active"} `} onClick={toggleSound}></div>
         </>
     );
 }
