@@ -1,5 +1,5 @@
-import { boxGeometry, levelMaterials } from "./Level";
 import { RigidBody } from "@react-three/rapier";
+import { boxGeometry, levelMaterials } from "./Level";
 
 export function Floor({
     geometry = boxGeometry,

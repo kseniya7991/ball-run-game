@@ -1,5 +1,5 @@
-import useGame from "./stores/useGame";
 import { useMemo } from "react";
+import useGame from "./stores/useGame";
 
 const HeartIcon = ({ hidden }) => (
     <svg

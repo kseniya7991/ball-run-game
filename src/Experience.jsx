@@ -56,10 +56,11 @@ export default function Experience() {
     }, []);
 
     const handlePhaseChange = useCallback(
-        (value) => value === "finished" && setTimeout(() => setPhase(value), 3000),
+        (value) => {
+            if (value === "finalized") setPhase(value);
+        },
         [phase]
     );
-
 
     useEffect(() => {
         const length = Object.keys(config).length;
@@ -77,14 +78,14 @@ export default function Experience() {
 
     return (
         <>
-            {/* <Perf position="top-left" /> */}
+            <Perf position="top-left" />
             {/* <OrbitControls makeDefault /> */}
 
             <color args={[bgColor]} attach="background" />
 
             <Physics>
-                <Lights isFinish={phase === "finished"} />
-                {phase !== "finished" && (
+                <Lights isFinish={phase === "finalized"} />
+                {phase !== "finalized" && (
                     <>
                         <mesh position={[0, -5, 0]} rotation={[-Math.PI / 2, 0, 0]}>
                             <planeGeometry args={[500, 500]} />
@@ -96,7 +97,7 @@ export default function Experience() {
 
                 {isConfigReady && <FinishScene ballsData={ballsData} />}
 
-              <Player />
+                <Player />
             </Physics>
         </>
     );

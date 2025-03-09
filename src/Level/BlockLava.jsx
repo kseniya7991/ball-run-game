@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import { useFrame, extend } from "@react-three/fiber";
 import { RigidBody, CuboidCollider } from "@react-three/rapier";
 
@@ -34,11 +34,15 @@ export function BlockLava({
     position = [0, 0, 0],
 }) {
     const lavaMaterial = useRef();
+
     const startBurning = useGame((state) => state.startBurning);
+    const isBurning = useGame((state) => state.isBurning);
     const fail = useGame((state) => state.fail);
-    const lavaSize = 2;
-    const floorSize = (4 - lavaSize) / 2;
-    const marginFloor = floorSize / 2 + lavaSize / 2;
+    const updateLivesOnFail = useGame((state) => state.updateLivesOnFail);
+
+    const lavaSize = useMemo(() => 2, []);
+    const floorSize = useMemo(() => (4 - lavaSize) / 2, [lavaSize]);
+    const marginFloor = useMemo(() => floorSize / 2 + lavaSize / 2, [floorSize, lavaSize]);
 
     useEffect(() => {
         lavaMaterial.current.uTime += Math.random() * 10;
@@ -49,6 +53,7 @@ export function BlockLava({
     });
 
     const handleCollision = (event) => {
+        if (!isBurning) updateLivesOnFail();
         startBurning();
         fail();
     };

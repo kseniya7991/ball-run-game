@@ -1,5 +1,5 @@
-import { Floor } from "./Floor";
 import { useMemo } from "react";
+import { Floor } from "./Floor";
 
 export function BlockNarrow({ position = [0, 0, 0] }) {
     const randomX = useMemo(() => Math.random() * 2 - 1, []);

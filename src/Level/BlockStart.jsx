@@ -1,15 +1,15 @@
 import { Float, Text } from "@react-three/drei";
+
 import useGame from "../stores/useGame";
 import { boxGeometry, levelMaterials } from "./Level";
 import { Floor } from "./Floor";
-import { useMemo } from "react";
 
 export function BlockStart({
     geometry = boxGeometry,
     material = levelMaterials.floor1,
     position = [0, 0, 0],
 }) {
-    const level = useMemo(() => useGame.getState().currentLevel, [useGame.getState().currentLevel]);
+    const level = useGame((state) => state.currentLevel);
 
     return (
         <>

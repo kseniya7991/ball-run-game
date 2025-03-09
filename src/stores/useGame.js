@@ -43,8 +43,8 @@ const initialConfig = {
         finalBlocks: [],
     },
     2: {
-        blocks: 8,
-        types: ["BlockLava"],
+        blocks: 2,
+        types: ["BlockAxe"],
         finalLength: 0,
         finalBlocks: [],
     },
@@ -114,11 +114,10 @@ export default create(
             // Theme
             theme: "dark",
             toggleTheme: (val) => set({ theme: val }),
-
-            blocksSeed: 0,
-
+            
             // Blocks count
             blocksCount: 1,
+            blocksSeed: 0,
 
             // Level length
             finalLevelLength: 0,
@@ -171,6 +170,7 @@ export default create(
             end: () => set((state) => (state.phase === "playing" ? { phase: "ended" } : {})),
             fail: () => set((state) => (state.phase === "playing" ? { phase: "failed" } : {})),
             finish: () => set((state) => (state.phase !== "finished" ? { phase: "finished" } : {})),
+            final: () => set((state) => (state.phase === "finished" ? { phase: "finalized" } : {})),
 
             updateLivesOnFail: () =>
                 set((state) => {

@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import { Float, Text } from "@react-three/drei";
 import { RigidBody, CuboidCollider } from "@react-three/rapier";
 import useGame from "../stores/useGame";
@@ -12,49 +12,60 @@ export function BlockEnd({
     position = [0, 0, 0],
 }) {
     const end = useRef();
-    const phase = useGame((state) => state.phase);
+    const timerRef = useRef(null);
+    const timer1Ref = useRef(null);
+    const timer2Ref = useRef(null);
 
+    const [phase, setPhase] = useState(null);
     const [countdown, setCountdown] = useState(3);
     const [message, setMessage] = useState("");
 
+    const final = useGame((state) => state.final);
+
     useEffect(() => {
-        let timer;
-        let timer1;
-        if (phase === "finished") {
-            setMessage("Only one thing remains...");
-            // setMessage("Осталось лишь одно...");
-            // Через 2 секунды показываем второе сообщение
-            timer1 = setTimeout(() => {
-                setMessage("Accept your fate.");
-                // setMessage("Принять свою судьбу");
+        if (countdown === 0) final();
+    }, [countdown, final]);
 
-                // Через еще 2 секунды начинаем отсчет
-                const timer2 = setTimeout(() => {
-                    setMessage(countdown.toString());
 
-                    // Запускаем таймер отсчета
-                    timer = setInterval(() => {
-                        setCountdown((prev) => {
-                            const newCount = prev - 1;
-                            setMessage(newCount.toString());
+    const handlePhaseChange = useCallback(
+        (value) => {
+            if (value === "finished") {
+                setPhase(value);
+                setMessage("Only one thing remains...");
 
-                            if (newCount === 0) {
-                                clearInterval(timer);
-                            }
-                            return newCount;
-                        });
-                    }, 1000);
+                timer1Ref.current = setTimeout(() => {
+                    setMessage("Accept your fate.");
+
+                    timer2Ref.current = setTimeout(() => {
+                        setMessage(countdown.toString());
+
+                        timerRef.current = setInterval(() => {
+                            setCountdown((prev) => {
+                                const newCount = prev - 1;
+                                setMessage(newCount.toString());
+
+                                if (newCount === 0) {
+                                    clearInterval(timerRef.current);
+                                }
+                                return newCount;
+                            });
+                        }, 1000);
+                    }, 2000);
                 }, 2000);
+            }
+        },
+        [countdown]
+    );
 
-                return () => clearTimeout(timer2);
-            }, 2000);
-        }
-
+    useEffect(() => {
+        const unsubscribePhase = useGame.subscribe((state) => state.phase, handlePhaseChange);
         return () => {
-            clearTimeout(timer1);
-            clearInterval(timer);
+            unsubscribePhase();
+            if (timerRef.current) clearInterval(timerRef.current);
+            if (timer1Ref.current) clearTimeout(timer1Ref.current);
+            if (timer2Ref.current) clearTimeout(timer2Ref.current);
         };
-    }, [phase]);
+    }, [handlePhaseChange]);
 
     return (
         <>

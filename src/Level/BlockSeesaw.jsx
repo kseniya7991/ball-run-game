@@ -6,6 +6,9 @@ import useGame from "../stores/useGame";
 
 import * as THREE from "three";
 
+const rotation = new THREE.Quaternion();
+rotation.setFromEuler(new THREE.Euler(0, 0, 0));
+
 export function BlockSeesaw({
     geometry = boxGeometry,
     material = levelMaterials.obstacle,
@@ -15,16 +18,16 @@ export function BlockSeesaw({
     const plank = useRef();
     const randomX = useMemo(() => Math.random() * 2 - 1, []);
 
+    const resetRotation = () => {
+        plank.current?.setRotation(rotation);
+        plank.current?.setAngvel({ x: 0, y: 0, z: 0 });
+    };
+
     useEffect(() => {
         const unsubscribePhase = useGame.subscribe(
             (state) => state.phase,
             (value) => {
-                if (value === "ready") {
-                    const rotation = new THREE.Quaternion();
-                    rotation.setFromEuler(new THREE.Euler(0, 0, 0));
-                    plank.current?.setRotation(rotation);
-                    plank.current?.setAngvel({ x: 0, y: 0, z: 0 });
-                }
+                if (value === "ready") resetRotation();
             }
         );
 

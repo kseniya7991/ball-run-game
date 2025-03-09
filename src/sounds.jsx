@@ -1,7 +1,3 @@
-// const hitSound = new Audio("./sound/hitObstacle2.mp3");
-// const hitObstacleSound = new Audio("./sound/ball.wav");
-// const hitLavaSound = new Audio("./sound/lava.mp3");
-
 const sounds = {
     hitSound: new Audio("./sound/hitObstacle2.mp3"),
     hitObstacleSound: new Audio("./sound/ball.wav"),
@@ -18,8 +14,6 @@ const throttle = (func, ms) => {
     let isThrottled = false,
         savedArgs,
         savedThis;
-
-    console.log(func, ms);
 
     function wrapper() {
         if (isThrottled) {
@@ -47,13 +41,13 @@ const throttle = (func, ms) => {
 const throttledPlaySound = throttle((sound, volume) => playSound(sound, volume), 200);
 
 export const playHitObstacleSound = (strength) => {
-    const startVolume = 0.08;
+    const startVolume = 0.05;
     const volume = Math.min(1, startVolume * strength);
     throttledPlaySound(sounds.hitObstacleSound, volume);
 };
 
 export const playHitSound = (strength) => {
-    const startVolume = 0.08;
+    const startVolume = 0.02;
     const volume = Math.min(1, startVolume * strength);
     throttledPlaySound(sounds.hitSound, volume);
 };

@@ -1,19 +1,20 @@
-import * as THREE from "three";
-import useGame from "./stores/useGame";
+import { useRef, useEffect, useState, useMemo } from "react";
 import { useRapier, RigidBody } from "@react-three/rapier";
 import { useFrame } from "@react-three/fiber";
 import { useKeyboardControls } from "@react-three/drei";
-import { useRef, useEffect, useState, useMemo } from "react";
 import { useControls } from "leva";
+
+import useGame from "./stores/useGame";
 import { LavaSparkles } from "./Level/LavaSparkles";
 import { playHitSound, playHitObstacleSound, playLavaSound, stopAllSounds } from "./sounds";
+import * as THREE from "three";
 
 export default function Player() {
     const body = useRef();
-    const [bodyPosition, setBodyPosition] = useState({ x: 0, y: 1, z: 0 });
     const [subscribeKeys, getKeys] = useKeyboardControls();
     const { rapier, world } = useRapier();
 
+    const [bodyPosition, setBodyPosition] = useState({ x: 0, y: 1, z: 0 });
     const [smoothCameraPosition] = useState(() => new THREE.Vector3(10, 10, 10));
     const [smoothCameraTarget] = useState(() => new THREE.Vector3());
     const [burnedColor] = useState(() => "#272727");
@@ -23,6 +24,8 @@ export default function Player() {
     const start = useGame((state) => state.start);
     const restart = useGame((state) => state.restart);
     const end = useGame((state) => state.end);
+    const fail = useGame((state) => state.fail);
+    const finish = useGame((state) => state.finish);
 
     const isBurning = useGame((state) => state.isBurning);
     const endBurning = useGame((state) => state.endBurning);
@@ -30,29 +33,15 @@ export default function Player() {
     const phase = useGame((state) => state.phase);
     const levelLength = useGame((state) => state.levelLength);
 
-    const fail = useGame((state) => state.fail);
-    const finish = useGame((state) => state.finish);
     const updateLivesOnFail = useGame((state) => state.updateLivesOnFail);
-    const isLastTry = useGame((state) => state.isLastTry);
-    const updateLevelOnFail = useGame((state) => state.updateLevelOnFail)
+    const updateLevelOnFail = useGame((state) => state.updateLevelOnFail);
 
     const soundEnabled = useGame((state) => state.soundEnabled);
-
-    const maxLives = useMemo(() => useGame.getState().maxLives, []);
-    const currentLives = useGame((state) => state.lives);
-
 
     const { "ball color": ballColor } = useControls({
         "ball color": "#be3737",
     });
 
-    useEffect(() => {
-        if (isBurning) playLavaSound();
-    }, [isBurning]);
-
-    /**
-     * Jump
-     */
     const jump = () => {
         const origin = body.current.translation();
         origin.y -= 0.31;
@@ -78,6 +67,10 @@ export default function Player() {
     };
 
     useEffect(() => {
+        if (isBurning) playLavaSound();
+    }, [isBurning]);
+
+    useEffect(() => {
         const unsubscribePhase = useGame.subscribe(
             (state) => state.phase,
             (value) => {
@@ -87,9 +80,7 @@ export default function Player() {
                 }
             }
         );
-        /**
-         * Subscribe to jump event
-         */
+        // Subscribe to jump event
         const unsubscribeJump = subscribeKeys(
             (state) => state.jump,
             (val) => {
@@ -147,16 +138,19 @@ export default function Player() {
 
     useFrame((state, delta) => {
         const bodyPosition = body.current?.translation();
-        setBodyPosition(body.current?.translation());
         if (!bodyPosition) return;
 
         const bodyPositionVec = new THREE.Vector3();
+        const cameraTarget = new THREE.Vector3();
+
+        setBodyPosition(body.current?.translation());
+
         bodyPositionVec.copy(bodyPosition);
         setBodyPosition(bodyPositionVec);
 
+        // Camera position
         const cameraPosition = getCameraPosition(state, bodyPosition);
 
-        const cameraTarget = new THREE.Vector3();
         cameraTarget.copy(bodyPosition);
         cameraTarget.y += 0.25;
 
@@ -166,10 +160,8 @@ export default function Player() {
         state.camera.position.copy(smoothCameraPosition);
         state.camera.lookAt(smoothCameraTarget);
 
-        /**
-         * Phases
-         */
-        if (bodyPosition.z < -(levelLength + 2 + 0.4) && bodyPosition.y > 0 && !isBurning) {
+        // The ball has reached the end of the level
+        if (bodyPosition.z < -(levelLength + 2 + 0.4) && bodyPosition.y > 0 && !isBurning && phase !== "finalized") {
             if (useGame.getState().currentLevel === lastLevel) {
                 finish();
             } else {
@@ -177,14 +169,16 @@ export default function Player() {
             }
         }
 
-        if (bodyPosition.y < -4 && phase !== "finished") {
+        // The ball falls from the level
+        if (bodyPosition.y < -4 && phase !== "finished" && phase !== "finalized") {
+            console.log("упал")
             fail();
             restart();
 
             updateLivesOnFail();
             updateLevelOnFail();
         }
-   
+
         // Fixes moments when limbo obstacle presses ball
         if (
             bodyPosition.y < 0 &&
@@ -208,7 +202,8 @@ export default function Player() {
         const finishLerpStrength = 2;
 
         // Move camera upper when its finished phase
-        if (phase === "finished") {
+        if (phase === "finished" || phase === "finalized") {
+            console.log("финальная позиция")
             cameraPosition.z += 6;
             cameraPosition.y += 8;
 
@@ -218,6 +213,7 @@ export default function Player() {
             lerpStrength =
                 elapsedTime < finishLerpDuration ? finishLerpStrength : defaultLerpStrength;
         } else {
+            console.log("обычная позиция")
             cameraPosition.z += 3.25;
             cameraPosition.y += 0.8;
 
@@ -236,17 +232,17 @@ export default function Player() {
         const absY = Math.abs(velocity.y);
         const absZ = Math.abs(velocity.z);
 
-        if (objName === "Limbo") {
-            setIsCollidingWithLimbo(true);
-            if (absX > 1.5 || absY > 1 || absZ > 1.5) {
-                playHitObstacleSound(Math.max(absX, absY, absZ));
-            }
-        } else if (objName === "obstacle") {
-            if (absX > 1.5 || absY > 1 || absZ > 1.5) {
-                playHitObstacleSound(Math.max(absX, absY, absZ));
-            }
+        if (objName === "Limbo") setIsCollidingWithLimbo(true);
+        if (objName === "Limbo" || objName === "obstacle") {
+            playSound(absX, absY, absZ);
         } else if (objName !== "lava" && velocity.y < -1) {
             playHitSound(-velocity.y);
+        }
+    };
+
+    const playSound = (absX, absY, absZ) => {
+        if (absX > 1.5 || absY > 1 || absZ > 1.5) {
+            playHitObstacleSound(Math.max(absX, absY, absZ));
         }
     };
 
