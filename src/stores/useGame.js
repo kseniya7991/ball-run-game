@@ -112,9 +112,13 @@ export default create(
                 }),
 
             // Theme
-            theme: "dark",
-            toggleTheme: (val) => set({ theme: val }),
-            
+            theme: localStorage.getItem("gameTheme") ?? "dark",
+            toggleTheme: (val) =>
+                set((state) => {
+                    localStorage.setItem("gameTheme", val);
+                    return { theme: val };
+                }),
+
             // Level length
             finalLevelLength: 0,
             levelLength: 0,

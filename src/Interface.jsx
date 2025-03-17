@@ -29,7 +29,7 @@ export default function Interface() {
     };
 
     useEffect(() => {
-        if(goNext) goToTheNextLevel();;
+        if(goNext) goToTheNextLevel();
     }, [goNext]);
 
     useEffect(() => {
