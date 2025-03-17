@@ -8,6 +8,8 @@ import { BlockLava } from "../Level/BlockLava";
 import { BlockNarrow } from "../Level/BlockNarrow";
 import { BlockSeesaw } from "../Level/BlockSeesaw";
 
+import { playLoseLifeSound, playNextLevelSound } from "../sounds";
+
 export const blockFunctions = {
     BlockSpinner: {
         component: BlockSpinner,
@@ -144,6 +146,7 @@ export default create(
 
             nextLevel: () =>
                 set((state) => {
+                    playNextLevelSound();
                     return state.phase === "ready"
                         ? {
                               currentLevel:
@@ -168,7 +171,11 @@ export default create(
                     state.phase !== "ready" ? { phase: "ready", blocksSeed: Math.random() } : {}
                 ),
             end: () => set((state) => (state.phase === "playing" ? { phase: "ended" } : {})),
-            fail: () => set((state) => (state.phase === "playing" ? { phase: "failed" } : {})),
+            fail: () =>
+                set((state) => {
+                    playLoseLifeSound();
+                    return state.phase === "playing" ? { phase: "failed" } : {};
+                }),
             finish: () => set((state) => (state.phase !== "finished" ? { phase: "finished" } : {})),
             final: () => set((state) => (state.phase === "finished" ? { phase: "finalized" } : {})),
 

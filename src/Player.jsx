@@ -6,7 +6,7 @@ import { useControls } from "leva";
 
 import useGame from "./stores/useGame";
 import { LavaSparkles } from "./Level/LavaSparkles";
-import { playHitSound, playHitObstacleSound, playLavaSound, stopAllSounds } from "./sounds";
+import { playHitSound, playHitObstacleSound, playLavaSound, stopAllHitSounds } from "./sounds";
 import * as THREE from "three";
 
 export default function Player() {
@@ -63,7 +63,7 @@ export default function Player() {
         body.current?.setTranslation({ x: 0, y: 1, z: 0 });
         body.current?.setLinvel({ x: 0, y: 0, z: 0 });
         body.current?.setAngvel({ x: 0, y: 0, z: 0 });
-        stopAllSounds();
+        stopAllHitSounds();
     };
 
     useEffect(() => {

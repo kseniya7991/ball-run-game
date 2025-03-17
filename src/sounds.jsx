@@ -1,7 +1,10 @@
 const sounds = {
-    hitSound: new Audio("./sound/hitObstacle2.mp3"),
+    hitSound: new Audio("./sound/hitBall2.mp3"),
     hitObstacleSound: new Audio("./sound/ball.wav"),
     hitLavaSound: new Audio("./sound/lava.mp3"),
+    loseLife: new Audio("./sound/loseLife.mp3"),
+    countdownTimer: new Audio("./sound/countdownTimer.mp3"),
+    nextLevel: new Audio("./sound/nextLevelSound.mp3"),
 };
 
 const playSound = (sound, volume) => {
@@ -47,9 +50,21 @@ export const playHitObstacleSound = (strength) => {
 };
 
 export const playHitSound = (strength) => {
-    const startVolume = 0.2;
+    const startVolume = 0.1;
     const volume = Math.min(1, startVolume * strength);
     throttledPlaySound(sounds.hitSound, volume);
+};
+
+export const playLoseLifeSound = () => {
+    throttledPlaySound(sounds.loseLife, 1);
+};
+
+export const playCountdownTimerSound = () => {
+    throttledPlaySound(sounds.countdownTimer, 1);
+};
+
+export const playNextLevelSound = () => {
+    throttledPlaySound(sounds.nextLevel, 0.6);
 };
 
 export const playLavaSound = () => {
@@ -60,5 +75,14 @@ export const stopAllSounds = () => {
     Object.values(sounds).forEach((sound) => {
         sound.pause();
         sound.currentTime = 0.0;
+    });
+};
+
+export const stopAllHitSounds = () => {
+    Object.entries(sounds).forEach(([key, sound]) => {
+        if (key.includes("hit")) {
+            sound.pause();
+            sound.currentTime = 0.0;
+        }
     });
 };
