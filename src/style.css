@@ -14,6 +14,11 @@ body,
     src: url("./bebas-neue-v9-latin-regular.woff");
 }
 
+@font-face {
+    font-family: "Days";
+    src: url("./Days.woff");
+}
+
 /* Interface */
 
 .interface {
@@ -23,20 +28,10 @@ body,
     width: 100%;
     height: 100%;
     pointer-events: none;
-    font-family: "Bebas Neue", cursive;
+    font-family: "Days", cursive;
 }
 
-.interface__time {
-    position: absolute;
-    top: 15%;
-    left: 0;
-    width: 100%;
-    color: #fff;
-    font-size: 6vh;
-    background: #00000033;
-    padding-top: 5px;
-    text-align: center;
-}
+
 
 .interface__restart {
     display: flex;
