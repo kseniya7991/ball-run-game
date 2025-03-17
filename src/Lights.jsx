@@ -18,23 +18,26 @@ export default function Lights({ isFinish = false }) {
         light.target.updateMatrixWorld();
     };
 
-    const updateFinishLight = ()=>{
-        light.current.shadow.camera.far = 100;
+    const updateFinishLight = () => {
+        light.current.shadow.camera.far = 30;
         light.current.intensity = 3;
         light.current.shadow.camera.updateProjectionMatrix();
-        light.current.shadow.map.needsUpdate = true;
         spotLight.current.target = targetRef.current;
-    }
+    };
 
     useFrame((state) => {
-        updateLightPosition(light.current, state.camera);
+        const position = isFinish ? { position: { x: 0, y: 0, z: -5 } } : state.camera;
+        updateLightPosition(light.current, position);
     });
 
     useEffect(() => {
         if (isFinish) updateFinishLight();
     }, [isFinish]);
 
-    const spotLightPosition = useMemo(()=> [4.48, -10 + 12, -finalLevelLength - 4],[finalLevelLength])
+    const spotLightPosition = useMemo(
+        () => [4.48, -10 + 12, -finalLevelLength - 4],
+        [finalLevelLength]
+    );
 
     return (
         <>
@@ -43,7 +46,7 @@ export default function Lights({ isFinish = false }) {
                 castShadow
                 position={[4, 4, 1]}
                 intensity={4.5}
-                shadow-mapSize={[1024, 1024]}
+                shadow-mapSize={[2048, 2048]}
                 shadow-camera-near={1}
                 shadow-camera-far={10}
                 shadow-camera-top={10}
@@ -55,6 +58,7 @@ export default function Lights({ isFinish = false }) {
             {isFinish && (
                 <group position={spotLightPosition}>
                     <spotLight
+                        castShadow
                         ref={spotLight}
                         position={[0, 0, 0]}
                         intensity={10}
@@ -63,6 +67,7 @@ export default function Lights({ isFinish = false }) {
                         penumbra={0.3}
                         decay={0.2}
                         color="#FFF7E1"
+                        shadow-mapSize={[1024, 1024]}
                     />
                     <object3D ref={targetRef} position={[-0.4, -1, 0]} />
                 </group>
