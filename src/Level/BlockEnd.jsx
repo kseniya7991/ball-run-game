@@ -23,7 +23,10 @@ export function BlockEnd({
     const final = useGame((state) => state.final);
 
     useEffect(() => {
-        if (countdown === 0) final();
+     
+        if (countdown === 0) {
+            final();
+        }
     }, [countdown, final]);
 
 
@@ -35,6 +38,7 @@ export function BlockEnd({
 
                 timer1Ref.current = setTimeout(() => {
                     setMessage("Accept your fate.");
+
 
                     timer2Ref.current = setTimeout(() => {
                         setMessage(countdown.toString());
@@ -61,7 +65,6 @@ export function BlockEnd({
         const unsubscribePhase = useGame.subscribe((state) => state.phase, handlePhaseChange);
         return () => {
             unsubscribePhase();
-            if (timerRef.current) clearInterval(timerRef.current);
             if (timer1Ref.current) clearTimeout(timer1Ref.current);
             if (timer2Ref.current) clearTimeout(timer2Ref.current);
         };
