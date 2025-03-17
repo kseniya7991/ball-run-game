@@ -133,7 +133,7 @@ export default function FinishScene({ ballsData }) {
                                     key={i}
                                     position-x={worldPosition.x - 0.2}
                                     position-z={worldPosition.z + zPosition}
-                                    position-y={0.06}
+                                    position-y={0.06 + worldPosition.x * 0.001}
                                     rotation-z={-0.5}
                                     rotation-x={-Math.PI * 0.5}
                                     material={planeShadowMaterial}
