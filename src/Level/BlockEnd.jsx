@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState, useCallback } from "react";
 import { Float, Text } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
 import { RigidBody, CuboidCollider } from "@react-three/rapier";
 import useGame from "../stores/useGame";
 
@@ -19,26 +20,33 @@ export function BlockEnd({
     const [phase, setPhase] = useState(null);
     const [countdown, setCountdown] = useState(3);
     const [message, setMessage] = useState("");
+    const [textOpacity, setTextOpacity] = useState(0);
 
     const final = useGame((state) => state.final);
 
+    useFrame((state, delta) => {
+        if (phase === "ready") setTextOpacity(0);
+        if (phase === "playing") {
+            setTextOpacity(textOpacity + delta * 2);
+            if (textOpacity >= 1) setTextOpacity(1);
+        }
+    });
+
     useEffect(() => {
-     
         if (countdown === 0) {
             final();
         }
     }, [countdown, final]);
 
-
     const handlePhaseChange = useCallback(
         (value) => {
+            setPhase(value);
             if (value === "finished") {
                 setPhase(value);
                 setMessage("Only one thing remains...");
 
                 timer1Ref.current = setTimeout(() => {
                     setMessage("Accept your fate.");
-
 
                     timer2Ref.current = setTimeout(() => {
                         setMessage(countdown.toString());
@@ -76,9 +84,10 @@ export function BlockEnd({
                 {phase !== "finished" && (
                     <Float floatIntensity={1.5} rotationIntensity={0.25} position={position}>
                         <Text
-                            font={"./bebas-neue-v9-latin-regular.woff"}
+                            font={"./Days.woff"}
                             position={[0, 2, 2]}
-                            scale={phase === "finished" ? 0.5 : 1}>
+                            scale={phase === "finished" ? 0.4 : 0.7}
+                            fillOpacity={textOpacity}>
                             Finish
                             <meshBasicMaterial toneMapped={false} />
                         </Text>
