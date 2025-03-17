@@ -30,7 +30,6 @@ export function BlockSeesaw({
                 if (value === "ready") resetRotation();
             }
         );
-
         return () => {
             unsubscribePhase();
         };

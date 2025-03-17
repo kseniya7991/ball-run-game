@@ -171,7 +171,6 @@ export default function Player() {
 
         // The ball falls from the level
         if (bodyPosition.y < -4 && phase !== "finished" && phase !== "finalized") {
-            console.log("упал")
             fail();
             restart();
 
@@ -203,7 +202,6 @@ export default function Player() {
 
         // Move camera upper when its finished phase
         if (phase === "finished" || phase === "finalized") {
-            console.log("финальная позиция")
             cameraPosition.z += 6;
             cameraPosition.y += 8;
 
@@ -213,7 +211,6 @@ export default function Player() {
             lerpStrength =
                 elapsedTime < finishLerpDuration ? finishLerpStrength : defaultLerpStrength;
         } else {
-            console.log("обычная позиция")
             cameraPosition.z += 3.25;
             cameraPosition.y += 0.8;
 
