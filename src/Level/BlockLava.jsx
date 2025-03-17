@@ -73,6 +73,7 @@ export function BlockLava({
             </RigidBody>
             <mesh
                 geometry={geometry}
+                material={material}
                 position-y={-0.125}
                 scale={[4, 0.15, lavaSize]}
                 castShadow

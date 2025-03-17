@@ -15,9 +15,6 @@ export default function Experience() {
     const [phase, setPhase] = useState(null);
     const [isConfigReady, setIsConfigReady] = useState(false);
 
-    const blocksCount = useGame((state) => state.blocksCount);
-    const blocksSeed = useGame((state) => state.blocksSeed);
-
     const setLevels = useGame((state) => state.setLevels);
     const updateFinalLevelLength = useGame((state) => state.updateFinalLevelLength);
 
@@ -91,7 +88,7 @@ export default function Experience() {
                             <planeGeometry args={[500, 500]} />
                             <meshBasicMaterial color={bgColor} toneMapped={false} />
                         </mesh>
-                        <Level count={blocksCount} seed={blocksSeed} config={config} />
+                        <Level />
                     </>
                 )}
 

@@ -115,10 +115,6 @@ export default create(
             theme: "dark",
             toggleTheme: (val) => set({ theme: val }),
             
-            // Blocks count
-            blocksCount: 1,
-            blocksSeed: 0,
-
             // Level length
             finalLevelLength: 0,
             levelLength: 0,
