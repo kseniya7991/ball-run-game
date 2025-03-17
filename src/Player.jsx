@@ -88,8 +88,14 @@ export default function Player() {
             }
         );
 
-        const unsubscribeAnyKey = subscribeKeys(() => {
-            start();
+        const unsubscribeAnyKey = subscribeKeys((controls) => {
+            const shouldStart = Object.keys(controls).some(key => {
+                return controls[key] === true && key !== "goNext";
+            });
+        
+            if (shouldStart) {
+                start(); // Ваш вызов функции
+            }
         });
 
         return () => {
@@ -161,7 +167,12 @@ export default function Player() {
         state.camera.lookAt(smoothCameraTarget);
 
         // The ball has reached the end of the level
-        if (bodyPosition.z < -(levelLength + 2 + 0.4) && bodyPosition.y > 0 && !isBurning && phase !== "finalized") {
+        if (
+            bodyPosition.z < -(levelLength + 2 + 0.4) &&
+            bodyPosition.y > 0 &&
+            !isBurning &&
+            phase !== "finalized"
+        ) {
             if (useGame.getState().currentLevel === lastLevel) {
                 finish();
             } else {
