@@ -47,7 +47,7 @@ export const playHitObstacleSound = (strength) => {
 };
 
 export const playHitSound = (strength) => {
-    const startVolume = 0.02;
+    const startVolume = 0.2;
     const volume = Math.min(1, startVolume * strength);
     throttledPlaySound(sounds.hitSound, volume);
 };
