@@ -3,6 +3,7 @@ import { Float, Text } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { RigidBody, CuboidCollider } from "@react-three/rapier";
 import useGame from "../stores/useGame";
+import { playCountdownTimerSound } from "../sounds";
 
 import { boxGeometry, levelMaterials } from "./Level";
 import { Floor } from "./Floor";
@@ -50,6 +51,7 @@ export function BlockEnd({
 
                     timer2Ref.current = setTimeout(() => {
                         setMessage(countdown.toString());
+                        playCountdownTimerSound();
 
                         timerRef.current = setInterval(() => {
                             setCountdown((prev) => {
@@ -105,19 +107,22 @@ export function BlockEnd({
                     </Text>
                 </Float>
 
-                <RigidBody type="fixed" position={position} ref={end}>
+                <RigidBody type="fixed" position={position} ref={end} colliders={false}>
+                    {/* left side */}
                     <CuboidCollider
                         args={[0.1, 3, 2]}
                         position={[-2, 1.7, 0]}
                         restitution={0}
                         friction={1}
                     />
+                    {/* right side */}
                     <CuboidCollider
                         args={[0.1, 3, 2]}
                         position={[2, 1.7, 0]}
                         restitution={0}
                         friction={1}
                     />
+                    {/* back side */}
                     <CuboidCollider
                         args={[2, 3, 0.1]}
                         position={[0, 1.7, -2]}
@@ -126,12 +131,15 @@ export function BlockEnd({
                     />
                     {phase === "finished" && (
                         <>
+                            {/* top side */}
                             <CuboidCollider
                                 args={[2, 3, 0.1]}
                                 position={[0, 1.7, 2]}
                                 restitution={0}
                                 friction={1}
                             />
+
+                            {/* front side */}
                             <CuboidCollider
                                 args={[2, 0.1, 2]}
                                 position={[0, 4.5, 0]}
