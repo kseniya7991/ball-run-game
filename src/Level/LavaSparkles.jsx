@@ -86,14 +86,14 @@ const smallSparklesMaterial = new THREE.PointsMaterial({
     size: 0.08,
     vertexColors: true,
     sizeAttenuation: true,
-    depthWrite: false,
+    depthWrite: true,
 });
 
 const largeSparklesMaterial = new THREE.PointsMaterial({
     size: 0.11,
     vertexColors: true,
     sizeAttenuation: true,
-    depthWrite: false,
+    depthWrite: true,
 });
 
 export function LavaSparkles({ position }) {
@@ -174,10 +174,10 @@ export function LavaSparkles({ position }) {
         // Update small sparkles
         for (let i = 0; i < smallPositions.count; i++) {
             const i3 = i * 3;
-            smallPositionsArray[i].y += delta * 0.02 * (i + 1);
+            smallPositionsArray[i].y += delta * 0.02 * (i * 1.1 + 2);
             smallPositions.array[i3 + 1] = smallPositionsArray[i].y;
 
-            if (smallPositionsArray[i].y > 0.8 && smallColorArray[i].r > 0.2) {
+            if (smallPositionsArray[i].y > 0.7 && smallColorArray[i].r > 0.2) {
                 smallColorArray[i].r = blackColor.r;
                 smallColorArray[i].g = blackColor.g;
                 smallColorArray[i].b = blackColor.b;
@@ -208,7 +208,7 @@ export function LavaSparkles({ position }) {
         // Update large sparkles
         for (let i = 0; i < largePositions.count; i++) {
             const i3 = i * 3;
-            largePositionsArray[i].y += delta * 0.02 * (i + 25 + 1 + 10);
+            largePositionsArray[i].y += delta * 0.02 * (i * 1.5 + 2);
             largePositions.array[i3 + 1] = largePositionsArray[i].y;
 
             if (largePositionsArray[i].y > 0.8 && largeColorArray[i].r > 0.2) {
