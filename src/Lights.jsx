@@ -20,7 +20,7 @@ export default function Lights({ isFinish = false }) {
     };
 
     const updateFinishLight = () => {
-        light.current.shadow.camera.far = 100;
+        light.current.shadow.camera.far = 30;
         light.current.intensity = 3;
         light.current.shadow.camera.updateProjectionMatrix();
         light.current.shadow.camera.needsUpdate = true;
