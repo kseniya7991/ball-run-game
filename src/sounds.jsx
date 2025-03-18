@@ -5,6 +5,7 @@ const sounds = {
     loseLife: new Audio("./sound/loseLife.mp3"),
     countdownTimer: new Audio("./sound/countdownTimer.mp3"),
     nextLevel: new Audio("./sound/nextLevelSound.mp3"),
+    lastFail: new Audio("./sound/lastFail2.mp3"),
 };
 
 const playSound = (sound, volume) => {
@@ -60,7 +61,7 @@ export const playLoseLifeSound = () => {
 };
 
 export const playCountdownTimerSound = () => {
-    throttledPlaySound(sounds.countdownTimer, 1);
+    throttledPlaySound(sounds.countdownTimer, 0.8);
 };
 
 export const playNextLevelSound = () => {
@@ -69,6 +70,10 @@ export const playNextLevelSound = () => {
 
 export const playLavaSound = () => {
     throttledPlaySound(sounds.hitLavaSound, 0.2);
+};
+
+export const playLastFailSound = () => {
+    throttledPlaySound(sounds.lastFail, 1);
 };
 
 export const stopAllSounds = () => {
