@@ -8,7 +8,7 @@ import { Floor } from "./Floor";
 
 export function BlockStart({
     geometry = boxGeometry,
-    material = levelMaterials.floor1,
+    material = levelMaterials.floor,
     position = [0, 0, 0],
 }) {
     const level = useGame((state) => state.currentLevel);
@@ -54,7 +54,7 @@ export function BlockStart({
                         rotation-y={-0.25}
                         scale={0.25}
                         fillOpacity={textOpacity}>
-                        level {level}
+                        LEVEL {level}
                         <meshBasicMaterial toneMapped={false} />
                     </Text>
                 )}

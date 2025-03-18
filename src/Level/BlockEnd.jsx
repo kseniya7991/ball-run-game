@@ -10,7 +10,7 @@ import { Floor } from "./Floor";
 
 export function BlockEnd({
     geometry = boxGeometry,
-    material = levelMaterials.floor1,
+    material = levelMaterials.accentFloor,
     position = [0, 0, 0],
 }) {
     const end = useRef();
@@ -90,7 +90,7 @@ export function BlockEnd({
                             position={[0, 2, 2]}
                             scale={phase === "finished" ? 0.4 : 0.7}
                             fillOpacity={textOpacity}>
-                            Finish
+                            FINISH
                             <meshBasicMaterial toneMapped={false} />
                         </Text>
                     </Float>

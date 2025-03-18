@@ -7,8 +7,8 @@ import * as THREE from "three";
 
 export const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 export const levelMaterials = {
-    floor1: new THREE.MeshStandardMaterial({ color: "limegreen" }),
-    floor2: new THREE.MeshStandardMaterial({ color: "greenyellow" }),
+    accentFloor: new THREE.MeshStandardMaterial({ color: "#336D82" }),
+    floor: new THREE.MeshStandardMaterial({ color: "#69868e" }),
     obstacle: new THREE.MeshStandardMaterial({ color: "mediumpurple" }),
     lava: new THREE.MeshStandardMaterial({ color: "#FF6600" }),
 };
