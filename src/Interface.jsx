@@ -53,7 +53,7 @@ export default function Interface() {
                 {/* Restart */}
                 {(phase === "ended" || phase === "failed") && (
                     <div className="interface__restart" onClick={goToTheNextLevel}>
-                        {phase === "failed" ? "Retry" : "Next"}
+                        {phase === "failed" ? "RETRY" : "NEXT"}
                     </div>
                 )}
 
