@@ -2,6 +2,7 @@ import { useRef, useEffect, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import useGame from "./stores/useGame";
 
+
 export default function Lights({ isFinish = false }) {
     const light = useRef();
     const spotLight = useRef();
@@ -19,14 +20,15 @@ export default function Lights({ isFinish = false }) {
     };
 
     const updateFinishLight = () => {
-        light.current.shadow.camera.far = 30;
+        light.current.shadow.camera.far = 100;
         light.current.intensity = 3;
         light.current.shadow.camera.updateProjectionMatrix();
+        light.current.shadow.camera.needsUpdate = true;
         spotLight.current.target = targetRef.current;
     };
 
     useFrame((state) => {
-        const position = isFinish ? { position: { x: 0, y: 0, z: -5 } } : state.camera;
+        const position = isFinish ? { position: { x: 0, y: 0, z: -finalLevelLength } } : state.camera;
         updateLightPosition(light.current, position);
     });
 
