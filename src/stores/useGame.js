@@ -8,7 +8,7 @@ import { BlockLava } from "../Level/BlockLava";
 import { BlockNarrow } from "../Level/BlockNarrow";
 import { BlockSeesaw } from "../Level/BlockSeesaw";
 
-import { playLoseLifeSound, playNextLevelSound } from "../sounds";
+import { playLoseLifeSound, playNextLevelSound, playLastFailSound } from "../sounds";
 
 export const blockFunctions = {
     BlockSpinner: {
@@ -40,35 +40,35 @@ export const blockFunctions = {
 const initialConfig = {
     1: {
         blocks: 1,
-        types: ["BlockLava"],
+        types: [ "BlockLimbo"],
         finalLength: 0,
         finalBlocks: [],
     },
     2: {
         blocks: 2,
-        types: ["BlockAxe"],
+        types: ["BlockAxe", "BlockLava", "BlockSpinner"],
         finalLength: 0,
         finalBlocks: [],
     },
-    // 3: {
-    //     blocks: 10,
-    //     types: ["BlockSpinner", "BlockLimbo", "BlockAxe", "BlockNarrow", "BlockLava"],
-    //     finalLength: 0,
-    //     finalBlocks: [],
-    // },
-    // 4: {
-    //     blocks: 12,
-    //     types: [
-    //         "BlockSpinner",
-    //         "BlockLimbo",
-    //         "BlockAxe",
-    //         "BlockNarrow",
-    //         "BlockLava",
-    //         "BlockSeesaw",
-    //     ],
-    //     finalLength: 0,
-    //     finalBlocks: [],
-    // },
+    3: {
+        blocks: 10,
+        types: ["BlockSpinner", "BlockLimbo", "BlockAxe", "BlockNarrow", "BlockLava"],
+        finalLength: 0,
+        finalBlocks: [],
+    },
+    4: {
+        blocks: 12,
+        types: [
+            "BlockSpinner",
+            "BlockLimbo",
+            "BlockAxe",
+            "BlockNarrow",
+            "BlockLava",
+            "BlockSeesaw",
+        ],
+        finalLength: 0,
+        finalBlocks: [],
+    },
     // 5: {
     //     blocks: 15,
     //     types: [
@@ -146,6 +146,15 @@ export default create(
 
             nextLevel: () =>
                 set((state) => {
+                    // const goToTheNextLevel = state.currentLevel + 1 <= state.levels;
+                    // if(state.phase !== "ready") return {};
+                    // if(goToTheNextLevel) {
+                    //     playNextLevelSound();
+                    //     return { currentLevel: state.currentLevel + 1 };
+                    // } else{
+                    //     playLastFailSound();
+                    //     return { currentLevel: 1 };
+                    // }
                     playNextLevelSound();
                     return state.phase === "ready"
                         ? {
@@ -173,7 +182,7 @@ export default create(
             end: () => set((state) => (state.phase === "playing" ? { phase: "ended" } : {})),
             fail: () =>
                 set((state) => {
-                    playLoseLifeSound();
+                   
                     return state.phase === "playing" ? { phase: "failed" } : {};
                 }),
             finish: () => set((state) => (state.phase !== "finished" ? { phase: "finished" } : {})),
@@ -190,6 +199,11 @@ export default create(
 
             updateLevelOnFail: () =>
                 set((state) => {
+                    if (state.isLastTry) {
+                        playLastFailSound();
+                    }else {
+                        playLoseLifeSound();
+                    }
                     const nextLevel = state.isLastTry ? 1 : state.currentLevel;
                     const nextLives =
                         nextLevel === 1 && state.isLastTry ? state.maxLives : state.lives;
