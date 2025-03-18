@@ -23,7 +23,7 @@ export default function Experience() {
     const bgColor = useGame((state) => (state.theme === "dark" ? "#191920" : "#afe0dd"));
 
     const config = useMemo(() => useGame.getState().config, []);
-    const ballsCount = useMemo(() => 150, []);
+    const ballsCount = useMemo(() => 100, []);
 
     useControls({
         theme: {
@@ -75,8 +75,8 @@ export default function Experience() {
 
     return (
         <>
-            <Perf position="top-left" />
-            {/* <OrbitControls makeDefault /> */}
+            {/* <Perf position="top-left" /> */}
+            <OrbitControls makeDefault />
 
             <color args={[bgColor]} attach="background" />
 
