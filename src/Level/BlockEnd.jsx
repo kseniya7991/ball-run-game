@@ -24,6 +24,8 @@ export function BlockEnd({
     const [textOpacity, setTextOpacity] = useState(0);
 
     const final = useGame((state) => state.final);
+    const soundEnabled = useGame((state) => state.soundEnabled);
+    const soundEnabledRef = useRef(soundEnabled);
 
     useFrame((state, delta) => {
         if (phase === "ready") setTextOpacity(0);
@@ -39,6 +41,10 @@ export function BlockEnd({
         }
     }, [countdown, final]);
 
+    useEffect(() => {
+        soundEnabledRef.current = soundEnabled;
+    }, [soundEnabled]);
+
     const handlePhaseChange = useCallback(
         (value) => {
             setPhase(value);
@@ -51,7 +57,7 @@ export function BlockEnd({
 
                     timer2Ref.current = setTimeout(() => {
                         setMessage(countdown.toString());
-                        playCountdownTimerSound();
+                        if (soundEnabledRef.current) playCountdownTimerSound();
 
                         timerRef.current = setInterval(() => {
                             setCountdown((prev) => {

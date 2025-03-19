@@ -18,9 +18,6 @@ const LavaMaterial = shaderMaterial(
         uTime: 0,
         uColorDark: new THREE.Color("#ff6600"),
         uColorLight: new THREE.Color("#f2f217"),
-        // fogColor: new THREE.Color("#565666"),
-        // fogNear: 5,
-        // fogFar: 20,
     },
     vertexShader,
     fragmentShader

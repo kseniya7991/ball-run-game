@@ -39,8 +39,8 @@ export const blockFunctions = {
 
 const initialConfig = {
     // 1: {
-    //     blocks: 4,
-    //     types: ["BlockNarrow", "BlockSeesaw"],
+    //     blocks: 10,
+    //     types: [ "BlockLimbo",  "BlockLava", "BlockNarrow", "BlockSeesaw"],
     //     finalLength: 0,
     //     finalBlocks: [],
     // },
@@ -50,47 +50,47 @@ const initialConfig = {
         finalLength: 0,
         finalBlocks: [],
     },
-    2: {
-        blocks: 8,
-        types: ["BlockAxe", "BlockLava", "BlockSpinner", "BlockLava"],
-        finalLength: 0,
-        finalBlocks: [],
-    },
-    3: {
-        blocks: 10,
-        types: ["BlockSpinner", "BlockLimbo", "BlockAxe", "BlockNarrow", "BlockLava"],
-        finalLength: 0,
-        finalBlocks: [],
-    },
-    4: {
-        blocks: 12,
-        types: [
-            "BlockSpinner",
-            "BlockLimbo",
-            "BlockAxe",
-            "BlockNarrow",
-            "BlockLava",
-            "BlockSeesaw",
-        ],
-        finalLength: 0,
-        finalBlocks: [],
-    },
-    5: {
-        blocks: 15,
-        types: [
-            "BlockSpinner",
-            "BlockLimbo",
-            "BlockAxe",
-            "BlockNarrow",
-            "BlockNarrow",
-            "BlockLava",
-            "BlockLava",
-            "BlockSeesaw",
-            "BlockSeesaw",
-        ],
-        finalLength: 0,
-        finalBlocks: [],
-    },
+    // 2: {
+    //     blocks: 8,
+    //     types: ["BlockAxe", "BlockLava", "BlockSpinner", "BlockLava"],
+    //     finalLength: 0,
+    //     finalBlocks: [],
+    // },
+    // 3: {
+    //     blocks: 10,
+    //     types: ["BlockSpinner", "BlockLimbo", "BlockAxe", "BlockNarrow", "BlockLava"],
+    //     finalLength: 0,
+    //     finalBlocks: [],
+    // },
+    // 4: {
+    //     blocks: 12,
+    //     types: [
+    //         "BlockSpinner",
+    //         "BlockLimbo",
+    //         "BlockAxe",
+    //         "BlockNarrow",
+    //         "BlockLava",
+    //         "BlockSeesaw",
+    //     ],
+    //     finalLength: 0,
+    //     finalBlocks: [],
+    // },
+    // 5: {
+    //     blocks: 15,
+    //     types: [
+    //         "BlockSpinner",
+    //         "BlockLimbo",
+    //         "BlockAxe",
+    //         "BlockNarrow",
+    //         "BlockNarrow",
+    //         "BlockLava",
+    //         "BlockLava",
+    //         "BlockSeesaw",
+    //         "BlockSeesaw",
+    //     ],
+    //     finalLength: 0,
+    //     finalBlocks: [],
+    // },
 };
 
 const calcNewConfig = () => {

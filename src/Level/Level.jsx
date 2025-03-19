@@ -34,65 +34,6 @@ export function Level() {
         <>
             <BlockStart position={[0, 0, finalLevelLength]} key={finalLevelLength} />
 
-            {/* {finalBlocks.map((Block, i) => {
-                const prevHolisticFloor = holisticFloor;
-                let needAddFloor = false;
-                if (
-                    Block.name !== "BlockSeesaw" &&
-                    Block.name !== "BlockLava" &&
-                    Block.name !== "BlockNarrow"
-                ) {
-                    holisticFloor += 1;
-                } else {
-                    holisticFloor = 0;
-                }
-
-                if (prevHolisticFloor > 0 && holisticFloor === 0) needAddFloor = true;
-
-                if (Block.name === "BlockSeesaw") {
-                    let posZ = positionZ - 6;
-                    positionZ += -8;
-
-                    return (
-                        <>
-                            <Block
-                                key={Date.now() + i}
-                                position={[0, 0, posZ + finalLevelLength]}
-                            />
-                             <Floor
-                                key={Date.now() * (i + 1)}
-                                scale={[4, 0.2, 4 * prevHolisticFloor]}
-                                position={[
-                                    0,
-                                    0.1,
-                                    posZ + finalLevelLength + (4 * prevHolisticFloor) / 2,
-                                ]}
-                            /> 
-                        </>
-                    );
-                } else {
-                    positionZ += -4;
-                    return (
-                        <>
-                            <Block
-                                key={Date.now() + i}
-                                position={[0, 0, positionZ + finalLevelLength]}
-                            />
-                             <Floor
-                                key={Date.now() * 2 + i}
-                                scale={[4, 0.2, 4 * prevHolisticFloor]}
-                                position={[
-                                    0,
-                                    0.1,
-                                    positionZ + finalLevelLength + (4 * prevHolisticFloor) / 2,
-                                ]}
-                            /> 
-                        </>
-                    );
-                }
-            })} */}
-          
-
             {finalBlocks.map((Block, i) => {
                 let prevHolisticFloor = holisticFloor;
                 const isLastBlock = finalBlocks.length - 1 === i;

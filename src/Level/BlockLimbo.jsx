@@ -3,7 +3,6 @@ import { useFrame } from "@react-three/fiber";
 import { RigidBody } from "@react-three/rapier";
 
 import { boxGeometry, levelMaterials } from "./Level";
-import { Floor } from "./Floor";
 
 export function BlockLimbo({
     geometry = boxGeometry,
@@ -26,7 +25,6 @@ export function BlockLimbo({
 
     return (
         <group position={position}>
-            <Floor />
             <RigidBody
                 name="Limbo"
                 ref={obstacle}
