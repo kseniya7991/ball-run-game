@@ -8,7 +8,7 @@ import { BlockLava } from "../Level/BlockLava";
 import { BlockNarrow } from "../Level/BlockNarrow";
 import { BlockSeesaw } from "../Level/BlockSeesaw";
 
-import { playLoseLifeSound, playNextLevelSound, playLastFailSound } from "../sounds";
+import { playLoseLifeSound, playNextLevelSound, playLastFailSound, stopAllSounds } from "../sounds";
 
 export const blockFunctions = {
     BlockSpinner: {
@@ -38,15 +38,21 @@ export const blockFunctions = {
 };
 
 const initialConfig = {
+    // 1: {
+    //     blocks: 4,
+    //     types: ["BlockNarrow", "BlockSeesaw"],
+    //     finalLength: 0,
+    //     finalBlocks: [],
+    // },
     1: {
-        blocks: 1,
-        types: [ "BlockLimbo"],
+        blocks: 6,
+        types: ["BlockSpinner", "BlockLimbo", "BlockAxe"],
         finalLength: 0,
         finalBlocks: [],
     },
     2: {
-        blocks: 2,
-        types: ["BlockAxe", "BlockLava", "BlockSpinner"],
+        blocks: 8,
+        types: ["BlockAxe", "BlockLava", "BlockSpinner", "BlockLava"],
         finalLength: 0,
         finalBlocks: [],
     },
@@ -69,46 +75,53 @@ const initialConfig = {
         finalLength: 0,
         finalBlocks: [],
     },
-    // 5: {
-    //     blocks: 15,
-    //     types: [
-    //         "BlockSpinner",
-    //         "BlockLimbo",
-    //         "BlockAxe",
-    //         "BlockNarrow",
-    //         "BlockNarrow",
-    //         "BlockLava",
-    //         "BlockLava",
-    //         "BlockSeesaw",
-    //         "BlockSeesaw",
-    //     ],
-    //     finalLength: 0,
-    //     finalBlocks: [],
-    // },
+    5: {
+        blocks: 15,
+        types: [
+            "BlockSpinner",
+            "BlockLimbo",
+            "BlockAxe",
+            "BlockNarrow",
+            "BlockNarrow",
+            "BlockLava",
+            "BlockLava",
+            "BlockSeesaw",
+            "BlockSeesaw",
+        ],
+        finalLength: 0,
+        finalBlocks: [],
+    },
 };
 
 const calcNewConfig = () => {
-    const newConfig = { ...initialConfig };
+    const newConfig = JSON.parse(JSON.stringify(initialConfig));
     Object.entries(newConfig).forEach(([key, configKey]) => {
         const { blocks, types } = configKey;
         if (!blocks || !types?.length) return;
         Array.from({ length: blocks }, () => {
             const block = blockFunctions[types[Math.floor(Math.random() * types.length)]];
+
             newConfig[key].finalLength += block.length;
             newConfig[key].finalBlocks.push(block.component);
         });
     });
-    return newConfig;
+    const finalLevelLength = newConfig[Object.keys(newConfig).length].finalLength;
+    return { newConfig, finalLevelLength };
 };
+
+const initialCalcConfig = calcNewConfig();
 
 export default create(
     subscribeWithSelector((set) => {
         return {
+            blocksSeed: 0,
+
             // Sound
             soundEnabled: localStorage.getItem("soundEnabled") === "true",
             toggleSound: () =>
                 set((state) => {
                     const nextValue = !state.soundEnabled;
+                    if (!nextValue) stopAllSounds();
                     localStorage.setItem("soundEnabled", nextValue);
                     return { soundEnabled: nextValue };
                 }),
@@ -122,7 +135,7 @@ export default create(
                 }),
 
             // Level length
-            finalLevelLength: 0,
+            finalLevelLength: initialCalcConfig.finalLevelLength,
             levelLength: 0,
             updateLevelLength: (val) =>
                 set((state) => {
@@ -146,16 +159,7 @@ export default create(
 
             nextLevel: () =>
                 set((state) => {
-                    // const goToTheNextLevel = state.currentLevel + 1 <= state.levels;
-                    // if(state.phase !== "ready") return {};
-                    // if(goToTheNextLevel) {
-                    //     playNextLevelSound();
-                    //     return { currentLevel: state.currentLevel + 1 };
-                    // } else{
-                    //     playLastFailSound();
-                    //     return { currentLevel: 1 };
-                    // }
-                    playNextLevelSound();
+                    if (state.soundEnabled) playNextLevelSound();
                     return state.phase === "ready"
                         ? {
                               currentLevel:
@@ -176,13 +180,20 @@ export default create(
 
             start: () => set((state) => (state.phase === "ready" ? { phase: "playing" } : {})),
             restart: () =>
-                set((state) =>
-                    state.phase !== "ready" ? { phase: "ready", blocksSeed: Math.random() } : {}
-                ),
+                set((state) => {
+                    const config = calcNewConfig();
+                    return state.phase !== "ready"
+                        ? {
+                              phase: "ready",
+                              blocksSeed: Math.random(),
+                              config: config.newConfig,
+                              finalLevelLength: config.finalLevelLength,
+                          }
+                        : {};
+                }),
             end: () => set((state) => (state.phase === "playing" ? { phase: "ended" } : {})),
             fail: () =>
                 set((state) => {
-                   
                     return state.phase === "playing" ? { phase: "failed" } : {};
                 }),
             finish: () => set((state) => (state.phase !== "finished" ? { phase: "finished" } : {})),
@@ -199,9 +210,9 @@ export default create(
 
             updateLevelOnFail: () =>
                 set((state) => {
-                    if (state.isLastTry) {
+                    if (state.isLastTry && state.soundEnabled) {
                         playLastFailSound();
-                    }else {
+                    } else if (state.soundEnabled) {
                         playLoseLifeSound();
                     }
                     const nextLevel = state.isLastTry ? 1 : state.currentLevel;
@@ -211,7 +222,7 @@ export default create(
                 }),
 
             // Config
-            config: calcNewConfig(),
+            config: initialCalcConfig.newConfig,
         };
     })
 );
