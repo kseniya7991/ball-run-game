@@ -7,7 +7,6 @@ export default function Lights({ isFinish = false }) {
     const light = useRef();
     const spotLight = useRef();
     const targetRef = useRef();
-    const finalLevelLength = useGame((state) => state.finalLevelLength);
 
     const updateLightPosition = (light, camera) => {
         // Update Z
@@ -28,7 +27,7 @@ export default function Lights({ isFinish = false }) {
     };
 
     useFrame((state) => {
-        const position = isFinish ? { position: { x: 0, y: 0, z: -finalLevelLength } } : state.camera;
+        const position = isFinish ? { position: { x: 0, y: 0, z: 0 } } : state.camera;
         updateLightPosition(light.current, position);
     });
 
@@ -37,8 +36,8 @@ export default function Lights({ isFinish = false }) {
     }, [isFinish]);
 
     const spotLightPosition = useMemo(
-        () => [4.48, -10 + 12, -finalLevelLength - 4],
-        [finalLevelLength]
+        () => [4.48, -10 + 12, -4],
+        []
     );
 
     return (

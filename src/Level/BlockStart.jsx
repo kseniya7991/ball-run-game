@@ -26,7 +26,10 @@ export function BlockStart({
 
     return (
         <>
-            <Float floatIntensity={0.5} rotationIntensity={0.25} position={[0, 0, 0.2]}>
+            <Float
+                floatIntensity={0.5}
+                rotationIntensity={0.25}
+                position={[position[0], position[1], position[2] + 0.2]}>
                 {level === 1 &&
                     ["BALL", "RUN"].map((text, index) => (
                         <Text

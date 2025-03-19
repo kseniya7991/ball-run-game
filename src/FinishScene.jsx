@@ -16,8 +16,7 @@ export default function FinishScene({ ballsData }) {
 
     const bgColor = useGame((state) => (state.theme === "dark" ? "#20273b" : "#008db0"));
 
-    const finalLevelLength = useMemo(() => useGame.getState().finalLevelLength, []);
-    const zPosition = useMemo(() => (finalLevelLength + 4) / 2, [finalLevelLength]);
+    const zPosition = useMemo(() => 2, []);
     const bakedShadow = useLoader(THREE.TextureLoader, "./textures/simpleShadow.jpg");
 
     const planeShadowMaterial = useMemo(
@@ -57,7 +56,6 @@ export default function FinishScene({ ballsData }) {
 
     return (
         <>
-            {/* <fogExp2 attach="fog" color="#191920" density={0.05} /> */}
             <group position={[0, -10, -zPosition]}>
                 <RigidBody
                     name="floor"

@@ -20,6 +20,7 @@ export default function Player() {
     const [burnedColor] = useState(() => "#272727");
     const [isCollidingWithLimbo, setIsCollidingWithLimbo] = useState(false);
 
+    const finalLevelLength = useGame((state) => state.finalLevelLength);
     const lastLevel = useGame((state) => state.levels);
     const start = useGame((state) => state.start);
     const restart = useGame((state) => state.restart);
@@ -60,14 +61,14 @@ export default function Player() {
      */
 
     const reset = () => {
-        body.current?.setTranslation({ x: 0, y: 1, z: 0 });
+        body.current?.setTranslation({ x: 0, y: 1, z: useGame.getState().finalLevelLength });
         body.current?.setLinvel({ x: 0, y: 0, z: 0 });
         body.current?.setAngvel({ x: 0, y: 0, z: 0 });
         stopAllHitSounds();
     };
 
     useEffect(() => {
-        if (isBurning) playLavaSound();
+        if (isBurning && soundEnabled) playLavaSound();
     }, [isBurning]);
 
     useEffect(() => {
@@ -80,7 +81,7 @@ export default function Player() {
                 }
             }
         );
-        // Subscribe to jump event
+       
         const unsubscribeJump = subscribeKeys(
             (state) => state.jump,
             (val) => {
@@ -89,12 +90,12 @@ export default function Player() {
         );
 
         const unsubscribeAnyKey = subscribeKeys((controls) => {
-            const shouldStart = Object.keys(controls).some(key => {
+            const shouldStart = Object.keys(controls).some((key) => {
                 return controls[key] === true && key !== "goNext";
             });
-        
+
             if (shouldStart) {
-                start(); // Ваш вызов функции
+                start(); 
             }
         });
 
@@ -168,7 +169,7 @@ export default function Player() {
 
         // The ball has reached the end of the level
         if (
-            bodyPosition.z < -(levelLength + 2 + 0.4) &&
+            bodyPosition.z < -(levelLength + 2 + 0.4) + finalLevelLength &&
             bodyPosition.y > 0 &&
             !isBurning &&
             phase !== "finalized"
@@ -233,7 +234,7 @@ export default function Player() {
     };
 
     const handleCollisionEnter = (event) => {
-        if (phase === "ready" || !soundEnabled) return;
+        if (phase === "ready") return;
         const objName = event.other.rigidBodyObject.name;
         const velocity = body.current.linvel();
         const absX = Math.abs(velocity.x);
@@ -241,6 +242,8 @@ export default function Player() {
         const absZ = Math.abs(velocity.z);
 
         if (objName === "Limbo") setIsCollidingWithLimbo(true);
+
+        if (!soundEnabled) return;
         if (objName === "Limbo" || objName === "obstacle") {
             playSound(absX, absY, absZ);
         } else if (objName !== "lava" && velocity.y < -1) {
@@ -269,7 +272,7 @@ export default function Player() {
                     friction={1}
                     linearDamping={0.5}
                     angularDamping={0.5}
-                    position={[0, 1, 0]}
+                    position={[0, 1, finalLevelLength]}
                     onCollisionEnter={handleCollisionEnter}
                     onCollisionExit={handleCollisionExit}>
                     <mesh castShadow>

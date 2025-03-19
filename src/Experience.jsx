@@ -17,14 +17,13 @@ export default function Experience() {
 
     const blocksSeed = useGame((state) => state.blocksSeed);
     const setLevels = useGame((state) => state.setLevels);
-    const updateFinalLevelLength = useGame((state) => state.updateFinalLevelLength);
 
     const currentTheme = useGame((state) => state.theme);
     const toggleTheme = useGame((state) => state.toggleTheme);
     const bgColor = useGame((state) => (state.theme === "dark" ? "#191920" : "#afe0dd"));
 
-    const config = useMemo(() => useGame.getState().config, []);
-    const ballsCount = useMemo(() => 2, []);
+    const config = useGame((state) => state.config);
+    const ballsCount = useMemo(() => 100, []);
 
     useControls({
         theme: {
@@ -62,7 +61,6 @@ export default function Experience() {
 
     useEffect(() => {
         const length = Object.keys(config).length;
-        updateFinalLevelLength(useGame.getState().config[length]?.finalLength);
         setLevels(length);
         setIsConfigReady(true);
     }, []);
@@ -81,7 +79,7 @@ export default function Experience() {
 
             <color args={[bgColor]} attach="background" />
 
-            <Physics>
+            <Physics debug={true}>
                 <Lights isFinish={phase === "finalized"} />
                 {phase !== "finalized" && (
                     <>
