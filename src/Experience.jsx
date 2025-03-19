@@ -15,6 +15,7 @@ export default function Experience() {
     const [phase, setPhase] = useState(null);
     const [isConfigReady, setIsConfigReady] = useState(false);
 
+    const blocksSeed = useGame((state) => state.blocksSeed);
     const setLevels = useGame((state) => state.setLevels);
     const updateFinalLevelLength = useGame((state) => state.updateFinalLevelLength);
 
