@@ -1,4 +1,4 @@
-const sounds = {
+export const sounds = {
     hitSound: new Audio("./sound/hitBall2.mp3"),
     hitObstacleSound: new Audio("./sound/ball.wav"),
     hitLavaSound: new Audio("./sound/lava.mp3"),

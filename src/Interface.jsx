@@ -1,8 +1,9 @@
- import { useKeyboardControls } from "@react-three/drei";
+import { useKeyboardControls } from "@react-three/drei";
 import { useEffect, useState } from "react";
 
 import useGame from "./stores/useGame";
 import Lives from "./Lives";
+import { sounds } from "./sounds";
 
 export default function Interface() {
     const forward = useKeyboardControls((state) => state.forward);
@@ -29,18 +30,40 @@ export default function Interface() {
     };
 
     useEffect(() => {
-        if(goNext && (phase === "ended" || phase === "failed")) goToTheNextLevel();
+        if (goNext && (phase === "ended" || phase === "failed")) goToTheNextLevel();
     }, [goNext]);
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsLoaded(true);
-        }, 3000);
+        let isCancelled = false;
+        let timer;
+
+        const soundPromises = Object.keys(sounds).map((key) => {
+            return new Promise((resolve) => {
+                sounds[key].addEventListener("canplaythrough", resolve, { once: true });
+            });
+        });
+
+        const waitMinimumTime = new Promise((resolve) => {
+            timer = setTimeout(() => {
+                resolve();
+            }, 3000);
+        });
+
+        Promise.all([...soundPromises, waitMinimumTime])
+            .then(() => {
+                if (!isCancelled) {
+                    setIsLoaded(true); 
+                }
+            })
+            .catch((error) => {
+                console.error("Ошибка при загрузке аудио:", error);
+            });
 
         return () => {
+            isCancelled = true;
             clearTimeout(timer);
         };
-    }, []);
+    }, [sounds]);
 
     return (
         <>
