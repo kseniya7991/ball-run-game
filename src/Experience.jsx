@@ -79,7 +79,7 @@ export default function Experience() {
 
             <color args={[bgColor]} attach="background" />
 
-            <Physics debug={true}>
+            <Physics>
                 <Lights isFinish={phase === "finalized"} />
                 {phase !== "finalized" && (
                     <>

@@ -1,4 +1,4 @@
-import { useKeyboardControls } from "@react-three/drei";
+ import { useKeyboardControls } from "@react-three/drei";
 import { useEffect, useState } from "react";
 
 import useGame from "./stores/useGame";
@@ -35,7 +35,7 @@ export default function Interface() {
     useEffect(() => {
         const timer = setTimeout(() => {
             setIsLoaded(true);
-        }, 0);
+        }, 3000);
 
         return () => {
             clearTimeout(timer);
