@@ -38,12 +38,6 @@ export const blockFunctions = {
 };
 
 const initialConfig = {
-    // 1: {
-    //     blocks: 10,
-    //     types: [ "BlockLimbo",  "BlockLava", "BlockNarrow", "BlockSeesaw"],
-    //     finalLength: 0,
-    //     finalBlocks: [],
-    // },
     1: {
         blocks: 6,
         types: ["BlockSpinner", "BlockLimbo", "BlockAxe"],
