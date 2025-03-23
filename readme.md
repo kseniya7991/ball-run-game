@@ -14,7 +14,7 @@ Have fun!
 
 ## Live
 
-The project is live here [https://ball-run-game.vercel.app/](https://ball-run-game.vercel.app/). \
+The project is live here [https://ball-run-game.vercel.app/](https://ball-run-game.vercel.app/). 
 
 ## Technologies
 
