@@ -2,7 +2,7 @@
 
 In this game, you control a ball and must carefully avoid obstacles to reach the end of each level. \
 The goal is to complete all levels and discover the finale. \
-Additionally, you can customize your experience by changing the theme or adjusting the color of the ball. 
+Additionally, you can customize your experience by changing the theme or adjusting the color of the ball. \
 Have fun!
 
 
@@ -14,7 +14,7 @@ Have fun!
 
 ## Live
 
-The project is live here [https://ball-run-game.vercel.app/](https://ball-run-game.vercel.app/).\
+The project is live here [https://ball-run-game.vercel.app/](https://ball-run-game.vercel.app/). \
 
 ## Technologies
 
