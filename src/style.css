@@ -9,15 +9,10 @@ body,
     background: ivory;
 }
 
-@font-face {
-    font-family: "Bebas Neue";
-    src: url("./bebas-neue-v9-latin-regular.woff");
-}
-
-@font-face {
+ @font-face {
     font-family: "Days";
-    src: url("./Days.woff");
-}
+    src: url("../Days.woff");
+} 
 
 /* Interface */
 
