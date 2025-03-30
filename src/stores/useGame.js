@@ -14,26 +14,38 @@ export const blockFunctions = {
     BlockSpinner: {
         component: BlockSpinner,
         length: 4,
+        isSpecialBlock: false,
+        isLongerBlock: false,
     },
     BlockLimbo: {
         component: BlockLimbo,
         length: 4,
+        isSpecialBlock: false,
+        isLongerBlock: false,
     },
     BlockAxe: {
         component: BlockAxe,
         length: 4,
+        isSpecialBlock: false,
+        isLongerBlock: false,
     },
     BlockLava: {
         component: BlockLava,
         length: 4,
+        isSpecialBlock: true,
+        isLongerBlock: false,
     },
     BlockNarrow: {
         component: BlockNarrow,
         length: 4,
+        isSpecialBlock: true,
+        isLongerBlock: false,
     },
     BlockSeesaw: {
         component: BlockSeesaw,
         length: 8,
+        isSpecialBlock: true,
+        isLongerBlock: true,
     },
 };
 
@@ -43,18 +55,21 @@ const initialConfig = {
         types: ["BlockSpinner", "BlockLimbo", "BlockAxe"],
         finalLength: 0,
         finalBlocks: [],
+        
     },
     2: {
         blocks: 8,
         types: ["BlockAxe", "BlockLava", "BlockSpinner", "BlockLava"],
         finalLength: 0,
         finalBlocks: [],
+        
     },
     3: {
         blocks: 10,
         types: ["BlockSpinner", "BlockLimbo", "BlockAxe", "BlockNarrow", "BlockLava"],
         finalLength: 0,
         finalBlocks: [],
+        
     },
     4: {
         blocks: 12,
@@ -68,6 +83,7 @@ const initialConfig = {
         ],
         finalLength: 0,
         finalBlocks: [],
+        
     },
     5: {
         blocks: 20,
@@ -87,6 +103,7 @@ const initialConfig = {
         ],
         finalLength: 0,
         finalBlocks: [],
+        
     },
 };
 
@@ -99,9 +116,14 @@ const calcNewConfig = () => {
             const block = blockFunctions[types[Math.floor(Math.random() * types.length)]];
 
             newConfig[key].finalLength += block.length;
-            newConfig[key].finalBlocks.push(block.component);
+            newConfig[key].finalBlocks.push({
+                Component: block.component,
+                isSpecialBlock: block.isSpecialBlock || false,
+                isLongerBlock: block.isLongerBlock || false,
+            });
         });
     });
+
     const finalLevelLength = newConfig[Object.keys(newConfig).length].finalLength;
     return { newConfig, finalLevelLength };
 };

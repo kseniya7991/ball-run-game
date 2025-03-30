@@ -34,12 +34,9 @@ export function Level() {
         <>
             <BlockStart position={[0, 0, finalLevelLength]} key={finalLevelLength} />
 
-            {finalBlocks.map((Block, i) => {
+            {finalBlocks.map(({ Component, isSpecialBlock, isLongerBlock }, i) => {
                 let prevHolisticFloor = holisticFloor;
                 const isLastBlock = finalBlocks.length - 1 === i;
-                const isSpecialBlock = ["BlockSeesaw", "BlockLava", "BlockNarrow"].includes(
-                    Block.name
-                );
 
                 !isSpecialBlock ? (holisticFloor += 1) : (holisticFloor = 0);
                 prevHolisticFloor =
@@ -50,14 +47,14 @@ export function Level() {
                     (isLastBlock && !isSpecialBlock);
 
                 const fixFloorPosition = !isSpecialBlock && isLastBlock ? -4 : 0;
-                const floorOffset = Block.name === "BlockSeesaw" ? 4 : 2;
-                const blockPositionZ = Block.name === "BlockSeesaw" ? positionZ - 6 : positionZ - 4;
+                const floorOffset = isLongerBlock ? 4 : 2;
+                const blockPositionZ = isLongerBlock ? positionZ - 6 : positionZ - 4;
 
-                positionZ += Block.name === "BlockSeesaw" ? -8 : -4;
+                positionZ += isLongerBlock ? -8 : -4;
 
                 return (
                     <group key={Date.now() + i}>
-                        <Block position={[0, 0, blockPositionZ + finalLevelLength]} />
+                        <Component position={[0, 0, blockPositionZ + finalLevelLength]} />
                         {needAddFloor && (
                             <Floor
                                 scale={[4, 0.2, 4 * prevHolisticFloor]}
@@ -74,9 +71,7 @@ export function Level() {
                         )}
                     </group>
                 );
-
             })}
-
             <BlockEnd
                 position={[0, 0, positionZ - 4 + finalLevelLength]}
                 key={positionZ - 4 + finalLevelLength}
