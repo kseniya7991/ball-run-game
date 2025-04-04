@@ -52,7 +52,7 @@ export default function Interface() {
         Promise.all([...soundPromises, waitMinimumTime])
             .then(() => {
                 if (!isCancelled) {
-                    setIsLoaded(true);
+                    setIsLoaded(true); 
                 }
             })
             .catch((error) => {
@@ -74,13 +74,11 @@ export default function Interface() {
                 </div>
 
                 {/* Restart */}
-                <div
-                    className={`interface__restart ${
-                        (phase === "ended" || phase === "failed") && "active"
-                    }`}
-                    onClick={goToTheNextLevel}>
-                    {phase === "failed" ? "RETRY" : "NEXT"}
-                </div>
+                {(phase === "ended" || phase === "failed") && (
+                    <div className={`interface__restart`} onClick={goToTheNextLevel}>
+                        {phase === "failed" ? "RETRY" : "NEXT"}
+                    </div>
+                )}
 
                 {/* Controls */}
                 <div className="interface__controls">

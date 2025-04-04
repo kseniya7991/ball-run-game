@@ -45,13 +45,6 @@ body,
     pointer-events: auto;
     cursor: pointer;
     font-family: "Days", cursive;
-
-    visibility: hidden;
-
-}
-
-.interface__restart.active {
-    visibility: visible;
 }
 
 .interface__lives {
