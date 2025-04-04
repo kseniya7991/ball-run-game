@@ -9,6 +9,12 @@ body,
     background: ivory;
 }
 
+ @font-face {
+    font-family: "Days";
+    src: url("/Days.woff");
+    font-display: swap;
+} 
+
 /* Interface */
 
 .interface {
@@ -20,6 +26,8 @@ body,
     pointer-events: none;
     font-family: "Days One", cursive;
 }
+
+
 
 .interface__restart {
     display: flex;
@@ -36,6 +44,14 @@ body,
     padding-top: 10px;
     pointer-events: auto;
     cursor: pointer;
+    font-family: "Days One", cursive;
+
+    visibility: hidden;
+
+}
+
+.interface__restart.active {
+    visibility: visible;
 }
 
 .interface__lives {
