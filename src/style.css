@@ -30,7 +30,6 @@ body,
 
 
 .interface__restart {
-    display: flex;
     justify-content: center;
 
     position: absolute;
@@ -42,9 +41,16 @@ body,
     font-size: 80px;
     background: #00000033;
     padding-top: 10px;
-    pointer-events: auto;
+   
+    visibility: hidden;
+    pointer-events: none;
     cursor: pointer;
     font-family: "Days", cursive;
+}
+
+.interface__restart.active {
+    visibility: visible;
+    pointer-events: auto;
 }
 
 .interface__lives {
