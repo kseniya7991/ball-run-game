@@ -30,6 +30,7 @@ body,
 
 
 .interface__restart {
+    display: flex;
     justify-content: center;
 
     position: absolute;
