@@ -186,7 +186,7 @@ export default function Player() {
             fail();
             restart();
 
-            updateLivesOnFail();
+            if(!isBurning) updateLivesOnFail();
             updateLevelOnFail();
         }
 

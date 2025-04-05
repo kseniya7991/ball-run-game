@@ -53,7 +53,7 @@ export function BlockEnd({
                 setMessage("Only one thing remains...");
 
                 timer1Ref.current = setTimeout(() => {
-                    setMessage("Accept your fate.");
+                    setMessage("Accept your fate");
 
                     timer2Ref.current = setTimeout(() => {
                         setMessage(countdown.toString());
